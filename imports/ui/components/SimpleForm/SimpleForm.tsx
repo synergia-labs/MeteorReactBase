@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import { Form } from 'semantic-ui-react'
-import {hasValue} from "../../../libs/hasValue";
+import {hasValue, isBoolean} from "../../../libs/hasValue";
 import _ from 'lodash';
 import { Image,Message,Icon } from 'semantic-ui-react'
 
 
-const FieldComponent = ({reactElement,...props}) => {
+const FieldComponent = ({reactElement,name,...props}) => {
 
     const [error,setError] = React.useState(false)
     const [value,setValue] = React.useState(props.initialValue||'')
@@ -13,13 +13,18 @@ const FieldComponent = ({reactElement,...props}) => {
     const [changeByUser,setChangeByUser] = React.useState(false)
 
     React.useEffect(() => {
-        // Atualiza o titulo do documento usando a API do browser
-        if(!changeByUser&&!hasValue(value)&&!!hasValue(props.initialValue)) {
-            setValue(props.initialValue);
-        }
+        
+           if(!changeByUser&&!hasValue(value)&&!!hasValue(props.initialValue)) {
+                setValue(props.initialValue);
+            }
+
+
         if(mode!==props.mode) {
             setMode(props.mode);
         }
+        
+        
+
     });
 
     props.setFieldMethods({
@@ -50,7 +55,7 @@ const FieldComponent = ({reactElement,...props}) => {
 
         },
         setMode:(newMode)=>{
-            if(newMode!==mode) {onChange
+            if(newMode!==mode) {
                 setMode(newMode);
                 return true;
             }
@@ -60,16 +65,31 @@ const FieldComponent = ({reactElement,...props}) => {
 
 
 
-    const onChange = (e,field)=>{
+    const onChange = (e,fieldData={})=>{
+        const field = {...(props.fieldSchema?props.fieldSchema:{}),...(e?e.target:{}),...fieldData};
 
-        setValue(field.value);
-        props.setDoc({[field.name]:field.value});
-        if(!changeByUser) {
-            setChangeByUser(true);
+        if(props.fieldSchema&&props.fieldSchema.type===Boolean&&isBoolean(field.checked)) {
+            setValue(field.checked);
+            props.setDoc({[name]:field.checked});
+            if(!changeByUser) {
+                setChangeByUser(true);
+            }
+            if(reactElement.props.onChange) {
+                reactElement.props.onChange(e,{...field,value:field.checked});
+            }
+        } else {
+            setValue(field.value);
+            props.setDoc({[name]:field.value});
+            if(!changeByUser) {
+                setChangeByUser(true);
+            }
+            if(reactElement.props.onChange) {
+                reactElement.props.onChange(e,field);
+            }            
         }
-        if(reactElement.props.onChange) {
-            reactElement.props.onChange(e,field);
-        }
+
+
+
     }
 
     return (React.cloneElement(reactElement, { value, onChange,
@@ -77,6 +97,7 @@ const FieldComponent = ({reactElement,...props}) => {
             label:reactElement.props.label||(props.fieldSchema?props.fieldSchema.label:undefined),
             readOnly:mode==='view',
             transparent:mode==='view'?true:undefined,
+            checked:(props.fieldSchema&&props.fieldSchema.type===Boolean?value:undefined)
         }))
 }
 
@@ -113,6 +134,7 @@ class SimpleForm extends Component {
             return newElement;
         } else {
             return <FieldComponent
+                name={element.props.name}
                 key={element.props.name?element.props.name:('el'+index)}
                 fieldSchema={self.props.schema?self.props.schema[element.props.name]:undefined}
                 initialValue={self.props.doc?self.props.doc[element.props.name]:''}

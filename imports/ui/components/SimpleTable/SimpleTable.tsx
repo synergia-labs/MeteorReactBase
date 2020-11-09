@@ -17,6 +17,8 @@ export default function SimpleTable({schema,data,onClick,actions}) {
             return 'number'
         } else if(field.type===String) {
             return 'text'
+        } else if(field.isHTML) {
+            return 'html'
         } else {
             return 'undefined';
         }
@@ -25,8 +27,10 @@ export default function SimpleTable({schema,data,onClick,actions}) {
     const renderType = (type,data) => {
         if(type==='image') {
             return <Image src={data} size='tiny' style={{maxHeight:70,maxWidth:80}} circular />
-        } if(type==='text'||type==='number') {
+        } else if(type==='text'||type==='number') {
             return data;
+        } else if(type==='html') {
+            return Array.isArray(data)?data.map(d=><div dangerouslySetInnerHTML={{__html: d}} />):<div dangerouslySetInnerHTML={{__html: data}} />;
         } else {
             return null;
         }

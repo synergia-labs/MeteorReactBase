@@ -24,7 +24,7 @@ export default props => {
         } else if (screenState === 'edit' && !!id) {
             return <ExampleDetailContainer {...props} screenState={screenState} id={id} edit/>;
         } else if (screenState === 'create') {
-            return <ExampleDetailContainer {...props} screenState={screenState} create/>;
+            return <ExampleDetailContainer DetailContainer {...props} screenState={screenState} create/>;
         }
     } else {
         return <ExampleListContainer {...props} />;

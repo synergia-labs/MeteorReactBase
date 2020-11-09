@@ -11,7 +11,9 @@ import settings from '../../../../settings.json';
 
 class ExampleApi extends ApiBase {
   constructor(props) {
-      super('example', exampleSch)
+      super('example', exampleSch);
+
+
     }
 
 }

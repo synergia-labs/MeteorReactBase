@@ -5,6 +5,19 @@ import {hasValue} from "../libs/hasValue";
 import {getUser} from "/imports/libs/getUser";
 
 
+//Conters
+const Counts = new Mongo.Collection("counts");
+Counts.deny({
+    insert() {
+        return true;
+    },
+    update() {
+        return true;
+    },
+    remove() {
+        return true;
+    },
+});
 
 const getNoImage = (isAvatar = false, name = 'dfasdfasfadsfadsdfasd', size = 64) => {
 
@@ -52,6 +65,8 @@ export class ApiBase {
         this.initCollection(apiName);
         this.initApiRest();
         this.publications = {};
+
+        this.counts = Counts;
 
 
         this.addPublication = this.addPublication.bind(this);
@@ -376,6 +391,8 @@ export class ApiBase {
 
         if (!options.disableDefaultPublications) {
             this.addPublication('default', this.defaultCollectionPublication);
+            this.addPublication('defaultCounter', this.defaultCounterCollectionPublication(this));
+            
         }
     }
 
@@ -416,6 +433,43 @@ export class ApiBase {
 
         return this.collectionInstance.find({...filter}, queryOptions);
     };
+
+    defaultCounterCollectionPublication = api => function (filter={}){
+        let count = 0;
+        let initializing = true;
+
+  // `observeChanges` only returns after the initial `added` callbacks have run.
+  // Until then, we don't want to send a lot of `changed` messages—hence
+  // tracking the `initializing` state.
+  const handle = api.getCollectionInstance().find(filter).observeChanges({
+    added: (id) => {
+      count += 1;
+
+      if (!initializing) {
+        this.changed('counts', `${api.collectionName}Total`, { count });
+      }
+    },
+
+    removed: (id) => {
+      count -= 1;
+      this.changed('counts', `${api.collectionName}Total`, { count });
+    }
+
+    // We don't care about `changed` events.
+  });
+
+  // Instead, we'll send one `added` message right after `observeChanges` has
+  // returned, and mark the subscription as ready.
+  initializing = false;
+  this.added('counts', `${api.collectionName}Total`, { count });
+  this.ready();
+
+  // Stop observing the cursor when the client unsubscribes. Stopping a
+  // subscription automatically takes care of sending the client any `removed`
+  // messages.
+  this.onStop(() => handle.stop());
+}
+
 
     /**
      * Get the collection instance.
@@ -474,7 +528,13 @@ export class ApiBase {
                     && !hasValue(dataObj[ key ])
                 ) {
                     //No Save
-                } else {
+                } else if (
+                    schema[ key ]
+                    && schema[ key ].type === String
+                    && dataObj[ key ]===null
+                ) {
+                    //No Save
+                }else {
                     newDataObj[ key ] = dataObj[ key ];
                 }
             }
@@ -827,7 +887,6 @@ export class ApiBase {
      * @param  {Object} ...params - Parameters for this meteor method.
      */
     callMethod(name, ...params) {
-        console.log('CallMethod',name,'>',params);
             if (Meteor.status().connected) {
                 Meteor.call(`${this.collectionName}.${name}`, ...params);
             } else {

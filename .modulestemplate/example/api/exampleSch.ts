@@ -23,3 +23,13 @@ export const exampleSch = {
   },
 
 };
+
+export interface example {
+  _id?: string;
+  image: string;
+  title: string;
+  description: string;
+  createdat: Date;
+  updatedat: Date;
+  createdby: string;
+}

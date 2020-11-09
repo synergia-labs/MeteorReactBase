@@ -171,7 +171,8 @@ Meteor.startup(() => {
     };
 
     Accounts.onLogin((params) => {
-         console.log('OnLogin:',params);
+         console.log('OnLogin:',params&&params.user?{_id:params.user._id,username:params.user.username}:'-');
+
         const userProfile = params.user
             ? userprofileApi.find({_id: params.user._id}).fetch()[0]
             : undefined;
