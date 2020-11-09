@@ -1,0 +1,54 @@
+{
+  "name": "MeteorReactBase",
+  "private": true,
+  "scripts": {
+    "start": "meteor run",
+    "test": "meteor test --once --driver-package meteortesting:mocha",
+    "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
+    "visualize": "meteor --production --extra-packages bundle-visualizer"
+  },
+  "dependencies": {
+    "@artsy/fresnel": "^1.2.2",
+    "@babel/runtime": "^7.11.2",
+    "bcrypt": "^5.0.0",
+    "lodash": "^4.17.20",
+    "meteor-node-stubs": "^1.0.1",
+    "prop-types": "^15.7.2",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-file-input-previews-base64": "^1.0.8",
+    "react-router-dom": "^5.2.0",
+    "react-semantic-toasts": "^0.6.5",
+    "request": "^2.88.2",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^2.0.0",
+    "shortid": "^2.2.15"
+  },
+  "meteor": {
+    "mainModule": {
+      "client": "client/main.tsx",
+      "server": "server/main.ts"
+    },
+    "testModule": "tests/main.ts"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.0.1",
+    "less": "^3.12.2",
+    "postcss": "^8.1.1",
+    "postcss-load-config": "^3.0.0",
+    "@types/meteor": "^1.4.49",
+    "@types/mocha": "^8.0.3",
+    "@types/react": "^16.9.49",
+    "@types/react-dom": "^16.9.8",
+    "typescript": "^4.0.2"
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {
+        "`overrideBrowserslist`": [
+          "last 2 versions"
+        ]
+      }
+    }
+  }
+}
