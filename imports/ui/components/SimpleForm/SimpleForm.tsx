@@ -6,6 +6,7 @@ import { Image,Message,Icon } from 'semantic-ui-react'
 
 
 const FieldComponent = ({reactElement,name,...props}) => {
+    console.log('#',reactElement,'name',name,'>>>',props);
 
     const [error,setError] = React.useState(false)
     const [value,setValue] = React.useState(props.initialValue||'')
@@ -66,7 +67,8 @@ const FieldComponent = ({reactElement,name,...props}) => {
 
 
     const onChange = (e,fieldData={})=>{
-        const field = {...(props.fieldSchema?props.fieldSchema:{}),...(e?e.target:{}),...fieldData};
+        const field = {...(props.fieldSchema?props.fieldSchema:{}),...(e?e.target:{}),
+        ...(fieldData&&fieldData.name?fieldData:{})};
 
         if(props.fieldSchema&&props.fieldSchema.type===Boolean&&isBoolean(field.checked)) {
             setValue(field.checked);
@@ -114,9 +116,18 @@ class SimpleForm extends Component {
     this.docValue = {...this.docValue,...newDoc};
     }
 
+    getDoc = () => {
+        return this.docValue;
+    }
+
     
     wrapElement = (element,index) => {
         const self=this;
+
+        if(!element.type) {
+            return element;
+        }
+
         if(element.type.name==='FormButton') {
             return React.cloneElement(element, {
                type:element.props.onChange?'button':'submit',
@@ -126,7 +137,7 @@ class SimpleForm extends Component {
             return element;
         }
         self.fields[element.props.name]={type:element.type.name,};
-        if(element.type.name==='FormGroup'||element.type.name==='Segment') {
+        if(element.type.name==='FormGroup'||element.type.name==='Segment'||React.Children.toArray(element.props.children).length>0) {
             const subElements = React.Children.toArray(element.props.children).map((element,index)=>{
                 return self.wrapElement(element,index)
             });

@@ -72,7 +72,7 @@ export default ({name,label,value,onChange,readOnly,error})=>{
 
 
     const callOnChange = (htmlText,QuillData,QA,QB) => {
-        onChange({},{name,value:htmlText})
+        onChange({target:{name,value:htmlText}},{name,value:htmlText})
     }
 
     return (<>
