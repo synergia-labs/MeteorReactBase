@@ -2,10 +2,20 @@ import React, { Component } from 'react'
 import { Form } from 'semantic-ui-react'
 import {hasValue, isBoolean} from "../../../libs/hasValue";
 import _ from 'lodash';
-import { Image,Message,Icon } from 'semantic-ui-react'
+import {Message,Icon } from 'semantic-ui-react'
 
+interface IFieldComponent {
+    reactElement:any;
+    name:string;
+    mode:string;
+    fieldSchema:object;
+    initialValue?:any;
+    setDoc: ({})=>void;
+    setFieldMethods: ({})=>any;
 
-const FieldComponent = ({reactElement,name,...props}) => {
+}
+
+const FieldComponent = ({reactElement,name,...props}:IFieldComponent) => {
     console.log('#',reactElement,'name',name,'>>>',props);
 
     const [error,setError] = React.useState(false)
@@ -29,7 +39,7 @@ const FieldComponent = ({reactElement,name,...props}) => {
     });
 
     props.setFieldMethods({
-        validateRequired: (hasError)=>{
+        validateRequired: (hasError:boolean)=>{
             if(hasError) {
                 setError(true);
                 return false;
@@ -47,7 +57,7 @@ const FieldComponent = ({reactElement,name,...props}) => {
             return true;
 
         },
-        setValue:(newValue)=>{
+        setValue:(newValue:any)=>{
             if(hasValue(newValue)) {
                 setValue(newValue);
                 return true;
@@ -55,7 +65,7 @@ const FieldComponent = ({reactElement,name,...props}) => {
             return false;
 
         },
-        setMode:(newMode)=>{
+        setMode:(newMode:string)=>{
             if(newMode!==mode) {
                 setMode(newMode);
                 return true;
@@ -103,7 +113,17 @@ const FieldComponent = ({reactElement,name,...props}) => {
         }))
 }
 
-class SimpleForm extends Component {
+interface ISimpleFormProps {
+    schema: [] | {};
+    onSubmit:(submit:()=>void)=> void;
+    mode?:string;
+    children?:object[];
+    doc?:object;
+    loading?:boolean;
+    styles?:object;
+}
+
+class SimpleForm extends Component<ISimpleFormProps> {
 
     docValue = {};
     fields = {};

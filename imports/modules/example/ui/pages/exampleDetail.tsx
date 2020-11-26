@@ -3,14 +3,19 @@ import {withTracker} from "meteor/react-meteor-data";
 import {exampleApi} from "../../api/exampleApi";
 import SimpleForm from "../../../../ui/components/SimpleForm/SimpleForm";
 import SimpleImageUploadBase64 from "../../../../ui/components/ImageUpload/SimpleImageUploadBase64";
-import _ from 'lodash';
 import {Form,Container, Header,Button} from "semantic-ui-react";
 
+interface IExampleDetail {
+    screenState:string;
+    loading:boolean;
+    exampleDoc: object;
+    save:{(doc:object,callback?:{}):void};
+    history: {push(url:string):void };
+}
 
+const ExampleDetail = ({screenState,loading,exampleDoc,save,history}:IExampleDetail) => {
 
-const ExampleDetail = ({screenState,loading,exampleDoc,save,history}) => {
-
-    const handleSubmit = (doc) => {
+    const handleSubmit = (doc:object) => {
         save(doc);
     }
 
@@ -62,7 +67,14 @@ const ExampleDetail = ({screenState,loading,exampleDoc,save,history}) => {
 )
 }
 
-export const ExampleDetailContainer = withTracker((props) => {
+interface IExampleDetailContainer {
+    screenState:string;
+    id:string;
+    history:{push(url:string):void };
+    showToast:(data:{type:string,title:string, description:string })=>void;
+}
+
+export const ExampleDetailContainer = withTracker((props:IExampleDetailContainer) => {
     const {screenState,id} = props;
     const subHandle = exampleApi.subscribe('default',{_id:id});
     const exampleDoc = subHandle.ready()?exampleApi.findOne({_id:id}):{}

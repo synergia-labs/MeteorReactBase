@@ -5,7 +5,6 @@ export const exampleSch = {
     defaultValue: '',
     optional: true,
     isImage: true,
-    optional: true,
   },
   title: {
     type: String,
@@ -24,7 +23,7 @@ export const exampleSch = {
 
 };
 
-export interface example {
+export interface IExample {
   _id?: string;
   image: string;
   title: string;

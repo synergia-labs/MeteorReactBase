@@ -9,8 +9,7 @@ export const userprofileData = {
  * Return Logged User if exists.
  * @return {Object} Logged User
  */
-export const getUser = (userDoc, connection) => {
-    const userParams = userDoc || {};
+export const getUser = (userDoc:object, connection: { id:string }):object => {
 
     if (userDoc) {
         return userDoc;

@@ -1,8 +1,9 @@
 import React from 'react';
+import Meteor from 'meteor/meteor'
 import {ExampleListContainer} from "./exampleList";
 import {ExampleDetailContainer} from "./exampleDetail";
 
-export default props => {
+export default (props:any) => {
 
     const validState = [ 'view', 'edit', 'create' ];
 

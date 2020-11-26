@@ -1,13 +1,13 @@
 import React from "react";
+// @ts-ignore
 import FileInputComponent from 'react-file-input-previews-base64'
-import {Image,Form} from "semantic-ui-react";
+import {Image} from "semantic-ui-react";
 import {hasValue} from "../../../libs/hasValue";
-import { Button } from 'semantic-ui-react'
 
 
-export default ({name,label,value,onChange,readOnly,error})=>{
+export default ({name,label,value,onChange,readOnly,error}:IBaseSimpleFormComponent)=>{
 
-    const onFileSelect=(fileData)=>{
+    const onFileSelect=(fileData:any)=>{
         let imgValue;
         if(fileData) {
             if(Array.isArray(fileData)) {
@@ -26,13 +26,18 @@ export default ({name,label,value,onChange,readOnly,error})=>{
             <Image src={value} size={'medium'}/>
         </>)
     }
+    const deleteImage = () => {
+        onChange({},{name,value: '-'})
+    }
 
     return (<>
         {hasValue(label)?(<label>{label}</label>):null}
+        <i  style={{cursor: 'pointer'}} className="trash icon"/>
         <FileInputComponent
             defaultFiles={hasValue(value)?[value]:undefined}
             labelText={""}
             name={name}
+            parentStyle={{border: error? '1px solid red':undefined}}
             labelStyle={{fontSize:14}}
             multiple={false}
             callbackFunction={onFileSelect}

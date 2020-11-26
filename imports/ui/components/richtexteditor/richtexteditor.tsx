@@ -61,7 +61,7 @@ const modules = {
   };
  
 
-export default ({name,label,value,onChange,readOnly,error})=>{
+export default ({name,label,value,onChange,readOnly,error}:IBaseSimpleFormComponent)=>{
 
     if(!!readOnly) {
         return (<>

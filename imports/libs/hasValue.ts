@@ -1,4 +1,4 @@
-export const isBoolean = (value) => {
+export const isBoolean = (value:any) => {
 
     if (value === null || value === undefined) {
         return false;
@@ -11,8 +11,8 @@ export const isBoolean = (value) => {
     return false;
 };
 
-export const hasValue = (value) => {
-    const getTypeOf = obj => {
+export const hasValue = (value:any) => {
+    const getTypeOf = (obj:any) => {
         return {}.toString.call(obj).split(' ')[1].slice(0, -1).toLowerCase();
     };
 

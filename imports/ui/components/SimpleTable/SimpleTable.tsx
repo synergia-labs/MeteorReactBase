@@ -1,16 +1,22 @@
 import React from 'react'
 import { Table,Image,Button,Icon } from 'semantic-ui-react'
 
+interface ISimpleTable {
+    schema:object;
+    data:object[];
+    onClick:(event: React.SyntheticEvent,id:string,doc:object)=>void;
+    actions:object[];
+}
 
-export default function SimpleTable({schema,data,onClick,actions}) {
+export default function SimpleTable({schema,data,onClick,actions}:ISimpleTable) {
 
     const hasOnClick = !!onClick;
-    const handleRowClick = (id,doc) => (event) =>{
+    const handleRowClick = (id:string,doc:object) => (event:React.SyntheticEvent) =>{
         if(onClick) {
             onClick(event,id,doc);
         }
     }
-    const getType = (field) => {
+    const getType = (field:object) => {
         if(field.isImage||field.isAvatar) {
             return 'image'
         } else if(field.type===Number) {
@@ -24,7 +30,7 @@ export default function SimpleTable({schema,data,onClick,actions}) {
         }
     }
 
-    const renderType = (type,data) => {
+    const renderType = (type:string,data:any) => {
         if(type==='image') {
             return <Image src={data} size='tiny' style={{maxHeight:70,maxWidth:80}} circular />
         } else if(type==='text'||type==='number') {

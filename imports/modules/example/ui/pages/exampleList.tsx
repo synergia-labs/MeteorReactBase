@@ -8,8 +8,21 @@ import {ReactiveVar} from "meteor/reactive-var";
 import {initSearch} from '../../../../libs/searchUtils';
 import { Icon, Input,Pagination,Dropdown } from 'semantic-ui-react'
 
+interface IExampleList {
+    examples:object[];
+    history:object;
+    remove:(doc:object)=>void;
+    showDialog:(dialog:object)=>void;
+    onSearch:(text?:string)=>void;
+    total:number;
+    loading:boolean;
+    setPage:(page:number)=>void;
+    setPageSize:(pageSize:number)=>void;
+    searchBy?:any;
+    pageProperties:object;
+}
 
-const ExampleList = ({examples,history,remove,showDialog,onSearch,total,loading,setPage,setPageSize,searchBy,pageProperties}) => {
+const ExampleList = ({examples,history,remove,showDialog,onSearch,total,loading,setPage,setPageSize,searchBy,pageProperties}:IExampleList) => {
 
     const onClick = (event,id,doc,showDialog) => {
         console.log(history)
