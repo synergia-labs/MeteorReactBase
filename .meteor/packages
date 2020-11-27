@@ -31,3 +31,5 @@ alanning:roles
 check
 reactive-dict
 meteorhacks:ssr
+ostrio:files
+ostrio:meteor-root

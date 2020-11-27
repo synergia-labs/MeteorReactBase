@@ -3,8 +3,8 @@ import {withTracker} from "meteor/react-meteor-data";
 import {exampleApi} from "../../api/exampleApi";
 import SimpleForm from "../../../../ui/components/SimpleForm/SimpleForm";
 import SimpleImageUploadBase64 from "../../../../ui/components/ImageUpload/SimpleImageUploadBase64";
-import _ from 'lodash';
 import {Form,Container, Header,Button} from "semantic-ui-react";
+import UploadFilesCollection from "/imports/ui/components/UploadFiles/uploadFilesCollection";
 
 
 
@@ -58,6 +58,7 @@ const ExampleDetail = ({screenState,loading,exampleDoc,save,history}) => {
                     ):null}
                 </Form.Group>
             </SimpleForm>
+            <UploadFilesCollection doc={{_id:'8s7dt8we'}}/>
         </Container>
 )
 }
