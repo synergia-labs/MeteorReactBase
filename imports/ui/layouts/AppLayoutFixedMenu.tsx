@@ -10,21 +10,29 @@ import {
     Menu,
     Segment,
 } from 'semantic-ui-react'
-import { BrowserRouter as Router} from 'react-router-dom'
+import { BrowserRouter as Router,withRouter, NavLink } from 'react-router-dom'
 import AppNavBar from "./AppNavBar";
 import AppRouterSwitch from "./AppRouterSwitch";
+import {isMobile} from '../../libs/deviceVerify'
+
+const HomeIconButton = withRouter((props)=>{
+    return <NavLink to={'/'}><div style={{
+        width:60,height:40,display:'flex',flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+        <Image style={{maxHeight:45}} src='/images/wireframe/logo.png' />
+    </div></NavLink>
+})
 
 const FixedMenuLayout = (props) => (
     <Router>
-        <Menu fixed='top' borderless stackable>
-            <Container fluid>
-                <Image size='mini' src='/images/wireframe/logo.png' />
+        <Menu fixed='top' borderless>
+            <Container style={{display:'flex',flexDirection:'row'}} fluid>
+                <HomeIconButton />
                 <AppNavBar {...props} />
             </Container>
         </Menu>
-        <Container style={{ marginTop: '5em',padding:4 }} fluid>
-        <AppRouterSwitch {...props} />
-        </Container>
+        <div style={{ width:'100%',margin:0,marginTop: '5em',padding:4 }}>
+            <AppRouterSwitch {...props} />
+        </div>
     </Router>
 )
 

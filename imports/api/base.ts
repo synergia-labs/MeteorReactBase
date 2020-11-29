@@ -297,7 +297,7 @@ export class ApiBase {
      * @param  {String} publication - Name of the publication.
      * @param  {Function} newPublicationsFunction - Function the handle the publication of the data
      */
-    addPublication = (publication, newPublicationsFunction) => {
+    addPublication = (publication:String, newPublicationsFunction:void) => {
         const self = this;
 
         if (Meteor.isServer) {

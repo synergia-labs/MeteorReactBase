@@ -19,7 +19,6 @@ const UserProfileList = ({users,history}) => {
                 schema={_.pick(userprofileApi.schema,['photo','username','email'])}
                 data={users}
                 onClick={onClick}
-
             />
         </Container>
     );

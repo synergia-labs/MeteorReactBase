@@ -6,10 +6,10 @@ import { withRouter, NavLink } from 'react-router-dom'
 import { Menu, Dropdown } from 'semantic-ui-react'
 import Modules from '../../modules';
 import {userprofileApi} from "../../userprofile/api/UserProfileApi";
+import {isMobile} from "/imports/libs/deviceVerify";
+
 
 const AppNavBar = ({ currentUser }) => {
-
-
 
     return (
         <>
@@ -23,7 +23,7 @@ const AppNavBar = ({ currentUser }) => {
                             activeClassName={'active'}
                         >
                             {menuData.icon?menuData.icon:null}
-                            {menuData.name}
+                            {isMobile?'':menuData.name}
                         </Menu.Item>
                     )
 

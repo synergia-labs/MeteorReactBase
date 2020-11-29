@@ -105,7 +105,7 @@ export default class Signin extends React.Component {
 
     return (
       <Container>
-        <Grid textAlign="center" verticalAlign="middle" centered columns={2}>
+        <Grid textAlign="center" verticalAlign="middle" centered>
           <Grid.Column>
             <Header as="h2" textAlign="center">
               <Image src="/images/wireframe/logo.png" /> {'Acessar o sistema'}

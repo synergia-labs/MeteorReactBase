@@ -16,7 +16,6 @@ interface IFieldComponent {
 }
 
 const FieldComponent = ({reactElement,name,...props}:IFieldComponent) => {
-    console.log('#',reactElement,'name',name,'>>>',props);
 
     const [error,setError] = React.useState(false)
     const [value,setValue] = React.useState(props.initialValue||'')

@@ -1,11 +1,11 @@
 import React from 'react';
 
 export const pagesMenuItemList = [
-  {
-    path: '/',
-    name: 'Home',
-    icon: <i className="home icon"></i>,
-  },
+  // {
+  //   path: '/',
+  //   name: 'Home',
+  //   icon: <i className="home icon"></i>,
+  // },
   // {
   //   path: '/signin',
   //   name: 'SingIn',
