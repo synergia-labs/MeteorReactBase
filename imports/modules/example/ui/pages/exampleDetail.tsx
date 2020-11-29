@@ -4,6 +4,7 @@ import {exampleApi} from "../../api/exampleApi";
 import SimpleForm from "../../../../ui/components/SimpleForm/SimpleForm";
 import SimpleImageUploadBase64 from "../../../../ui/components/ImageUpload/SimpleImageUploadBase64";
 import {Form,Container, Header,Button} from "semantic-ui-react";
+import UploadFilesCollection from "/imports/ui/components/UploadFiles/uploadFilesCollection";
 
 interface IExampleDetail {
     screenState:string;
@@ -63,6 +64,7 @@ const ExampleDetail = ({screenState,loading,exampleDoc,save,history}:IExampleDet
                     ):null}
                 </Form.Group>
             </SimpleForm>
+            <UploadFilesCollection doc={{_id:'8s7dt8we'}}/>
         </Container>
 )
 }
