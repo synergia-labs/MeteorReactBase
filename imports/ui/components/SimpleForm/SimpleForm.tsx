@@ -27,6 +27,8 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
     const [mode,setMode] = React.useState(props.mode||'edit')
     const [changeByUser,setChangeByUser] = React.useState(false)
 
+    const formRefs = {};
+
     React.useEffect(() => {
         if(!changeByUser&&!hasValue(value)&&!!hasValue(initialValue)) {
             setValue(initialValue);
@@ -50,7 +52,7 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
                 return false;
             } else if(!!error) {
                 setError(true);
-                return true;
+                return false;
             }
             return true;
 
@@ -131,7 +133,7 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
     const label = reactElement.props.label||(props.fieldSchema?props.fieldSchema.label:undefined);
 
     return (
-        <>
+        <div style={{width:'100%'}}>
             {hasValue(label)?(<label
                 style={{
                     display: 'block',
@@ -142,11 +144,14 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
                     textTransform: 'none',
                 }}
             >{label}</label>):null}
+            <div style={{width:'100%',marginLeft:10}}>
             {(value||[]).map(subForm=>{
+
                 return (
+                    <div style={{border:'1px solid #DDD',margin:3,display:'flex',flexDirection:'row'}}>
                     <SimpleForm
+                        ref={refForm=>formRefs[subForm.id]=refForm}
                         key={subForm.id}
-                        style={{border:'1px solid #DDD',margin:3}}
                         mode={mode}
                         schema={props.fieldSchema&&props.fieldSchema.subSchema?props.fieldSchema.subSchema:undefined}
                         doc={subForm}
@@ -154,9 +159,17 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
                     >
                         {childrensElements}
                     </SimpleForm>
+                        {mode!=='view'?(
+                            <div style={{display:'flex',flexDirection:'column',justifyContent:'center'}}>
+                                <Button icon={'trash'} />
+                            </div>
+                        ):null}
+
+                    </div>
                     )
 
             })}
+            </div>
             {mode!=='view'?(<div style={{display:'flex',flexDirection:'row',justifyContent:'center'}}>
                 <Button icon={'add'}
                         type="button"
@@ -164,12 +177,9 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
                 />
             </div>):null}
 
-        </>
+        </div>
     );
 }
-
-
-
 
 interface ISubFormComponent {
     reactElement:any;
@@ -279,7 +289,7 @@ const SubFormComponent = ({reactElement,childrensElements,name,...props}:ISubFor
 
     const label = reactElement.props.label||(props.fieldSchema?props.fieldSchema.label:undefined);
     return (
-        <>
+        <div style={{width:'100%'}}>
             {hasValue(label)?(<label
                 style={{
                     display: 'block',
@@ -290,15 +300,18 @@ const SubFormComponent = ({reactElement,childrensElements,name,...props}:ISubFor
                     textTransform: 'none',
                 }}
             >{label}</label>):null}
-        <SimpleForm
-                mode={mode}
-                schema={props.fieldSchema&&props.fieldSchema.subSchema?props.fieldSchema.subSchema:undefined}
-                doc={value}
-                onFormChange={onFormChangeHandle}
-                >
-            {childrensElements}
-        </SimpleForm>
-            </>
+            <div style={{border:'1px solid #ddd',margin:3,marginLeft:10}}>
+                <SimpleForm
+                        mode={mode}
+                        schema={props.fieldSchema&&props.fieldSchema.subSchema?props.fieldSchema.subSchema:undefined}
+                        doc={value}
+                        onFormChange={onFormChangeHandle}
+                        >
+                    {childrensElements}
+                </SimpleForm>
+            </div>
+
+            </div>
     );
 }
 
@@ -350,7 +363,7 @@ const FieldComponent = ({reactElement,name,...props}:IFieldComponent) => {
                 return false;
             } else if(!!error) {
                 setError(true);
-                return true;
+                return false;
             }
             return true;
 

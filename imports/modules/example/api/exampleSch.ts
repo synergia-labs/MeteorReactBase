@@ -50,7 +50,7 @@ export const exampleSch = {
     type: [Object],
     label: 'Tarefas',
     defaultValue: '',
-    optional: true,
+    optional: false,
     subSchema: {
       name: {
         type: String,
