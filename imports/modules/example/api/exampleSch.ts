@@ -46,6 +46,26 @@ export const exampleSch = {
       },
     }
   }
+  tasks: {
+    type: [Object],
+    label: 'Tarefas',
+    defaultValue: '',
+    optional: true,
+    subSchema: {
+      name: {
+        type: String,
+        label: 'Nome da Tarefa',
+        defaultValue: '',
+        optional: false,
+      },
+      description: {
+        type: String,
+        label: 'Descrição da Tarefa',
+        defaultValue: '',
+        optional: false,
+      },
+    }
+  }
 };
 
 export interface IExample {

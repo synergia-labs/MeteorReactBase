@@ -1,9 +1,174 @@
 import React, { Component } from 'react'
-import {Container, Form} from 'semantic-ui-react'
+import {Button, Container, Form} from 'semantic-ui-react'
 import {hasValue, isBoolean} from "../../../libs/hasValue";
 import _ from 'lodash';
 import {Message,Icon } from 'semantic-ui-react'
 import {exampleApi} from "/imports/modules/example/api/exampleApi";
+import shortid from 'shortid';
+
+
+interface ISubFormArrayComponent {
+    reactElement:any;
+    childrensElements:any;
+    name:string;
+    mode:string;
+    fieldSchema:object;
+    initialValue?:any;
+    setDoc: ({})=>void;
+    setFieldMethods: ({})=>any;
+
+}
+
+const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue,...props}:ISubFormArrayComponent) => {
+
+    const [error,setError] = React.useState(false)
+    const [value,setValue] = React.useState(initialValue||[])
+    const [stringValue,setStringValue] = React.useState('')
+    const [mode,setMode] = React.useState(props.mode||'edit')
+    const [changeByUser,setChangeByUser] = React.useState(false)
+
+    React.useEffect(() => {
+        if(!changeByUser&&!hasValue(value)&&!!hasValue(initialValue)) {
+            setValue(initialValue);
+        }
+        if(mode!==props.mode) {
+            setMode(props.mode);
+        }
+    },[initialValue,mode]);
+
+    props.setFieldMethods({
+        validateRequired: (hasError:boolean)=>{
+            if(hasError) {
+                setError(true);
+                return false;
+            } else if(hasValue(hasError)&&hasError===false) {
+                setError(false);
+                return true;
+            }
+            if(!hasValue(value)) {
+                setError(true);
+                return false;
+            } else if(!!error) {
+                setError(true);
+                return true;
+            }
+            return true;
+
+        },
+        setValue:(newValue:any)=>{
+            if(hasValue(newValue)) {
+                setValue(newValue);
+                return true;
+            }
+            return false;
+
+        },
+        setMode:(newMode:string)=>{
+            if(newMode!==mode) {
+                setMode(newMode);
+                return true;
+            }
+            return false;
+        },
+    })
+
+
+
+    const onChange = (e,fieldData={})=>{
+        const field = {...(props.fieldSchema?props.fieldSchema:{}),...(e?e.target:{}),
+            ...(fieldData&&fieldData.name?fieldData:{})};
+
+        if(props.fieldSchema&&props.fieldSchema.type===Boolean&&isBoolean(field.checked)) {
+            setValue(field.checked);
+            props.setDoc({[name]:field.checked});
+            if(!changeByUser) {
+                setChangeByUser(true);
+            }
+            if(reactElement.props.onChange) {
+                reactElement.props.onChange(e,{...field,value:field.checked});
+            }
+        } else {
+            setValue(field.value);
+            props.setDoc({[name]:field.value});
+            if(!changeByUser) {
+                setChangeByUser(true);
+            }
+            if(reactElement.props.onChange) {
+                reactElement.props.onChange(e,field);
+            }
+        }
+
+
+
+    }
+
+
+    const addSubForm = () => {
+        const newValue = (value||[]);
+
+        newValue.push({
+            id:shortid.generate();
+        })
+
+        setValue(newValue);
+        setStringValue(newValue.toString())
+    }
+
+    const onFormChangeHandle = formId => (doc) => {
+        const newDoc = (value||[]).map(subDoc=>{
+            if(subDoc.id===formId) {
+                subDoc = {...subDoc,...doc}
+            }
+
+            return subDoc;
+        })
+
+        onChange({target:{
+                value:newDoc,
+            }})
+    }
+
+    const label = reactElement.props.label||(props.fieldSchema?props.fieldSchema.label:undefined);
+
+    return (
+        <>
+            {hasValue(label)?(<label
+                style={{
+                    display: 'block',
+                    margin: '0em 0em 0.28571429rem 0em',
+                    color: '#212121',
+                    fontSize: '0.92857143em',
+                    fontWeight: 'bold',
+                    textTransform: 'none',
+                }}
+            >{label}</label>):null}
+            {(value||[]).map(subForm=>{
+                return (
+                    <SimpleForm
+                        key={subForm.id}
+                        style={{border:'1px solid #DDD',margin:3}}
+                        mode={mode}
+                        schema={props.fieldSchema&&props.fieldSchema.subSchema?props.fieldSchema.subSchema:undefined}
+                        doc={subForm}
+                        onFormChange={onFormChangeHandle(subForm.id)}
+                    >
+                        {childrensElements}
+                    </SimpleForm>
+                    )
+
+            })}
+            {mode!=='view'?(<div style={{display:'flex',flexDirection:'row',justifyContent:'center'}}>
+                <Button icon={'add'}
+                        type="button"
+                        onClick={addSubForm}
+                />
+            </div>):null}
+
+        </>
+    );
+}
+
+
 
 
 interface ISubFormComponent {
@@ -18,10 +183,10 @@ interface ISubFormComponent {
 
 }
 
-const SubFormComponent = ({reactElement,childrensElements,name,...props}:IFieldComponent) => {
+const SubFormComponent = ({reactElement,childrensElements,name,...props}:ISubFormComponent) => {
 
     const [error,setError] = React.useState(false)
-    const [value,setValue] = React.useState(props.initialValue||'')
+    const [value,setValue] = React.useState(props.initialValue||{})
     const [mode,setMode] = React.useState(props.mode||'edit')
     const [changeByUser,setChangeByUser] = React.useState(false)
 
@@ -107,7 +272,6 @@ const SubFormComponent = ({reactElement,childrensElements,name,...props}:IFieldC
     }
 
     const onFormChangeHandle = (doc) => {
-        console.log('onFormChangeHandle',doc);
         onChange({target:{
             value:doc,
             }})
@@ -127,7 +291,7 @@ const SubFormComponent = ({reactElement,childrensElements,name,...props}:IFieldC
                 }}
             >{label}</label>):null}
         <SimpleForm
-                mode={props.readOnly?'view':'edit'}
+                mode={mode}
                 schema={props.fieldSchema&&props.fieldSchema.subSchema?props.fieldSchema.subSchema:undefined}
                 doc={value}
                 onFormChange={onFormChangeHandle}
@@ -137,7 +301,6 @@ const SubFormComponent = ({reactElement,childrensElements,name,...props}:IFieldC
             </>
     );
 }
-
 
 
 
@@ -297,8 +460,20 @@ class SimpleForm extends Component<ISimpleFormProps> {
         }
         self.fields[element.props.name]={type:element.type.name,};
         if(element.type.name==='FormGroup'&&element.props.formType==='subform'&&!!element.props.name) {
-            console.log(element,'<>',element.props.formType,'<>',element.props.name)
             return <SubFormComponent
+                name={element.props.name}
+                childrensElements={element.props.children}
+                key={element.props.name?element.props.name:('el'+index)}
+                fieldSchema={self.props.schema?self.props.schema[element.props.name]:undefined}
+                initialValue={self.props.doc?self.props.doc[element.props.name]:''}
+                reactElement={element}
+                setDoc={this.setDoc}
+                mode={self.props.mode}
+                setFieldMethods={(methods)=>self.fields[element.props.name]={...self.fields[element.props.name],...methods}}
+            />
+
+        } else if(element.type.name==='FormGroup'&&element.props.formType==='subformArray'&&!!element.props.name) {
+            return <SubFormArrayComponent
                 name={element.props.name}
                 childrensElements={element.props.children}
                 key={element.props.name?element.props.name:('el'+index)}
