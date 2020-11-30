@@ -49,7 +49,6 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
 
         },
         validateRequiredSubForm:()=>{
-            console.log(formRefs);
             let result = true;
             Object.keys(formRefs).forEach(key=>{
                 const subFormRef = formRefs[key];
@@ -58,8 +57,6 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
                     result = false;
                 }
             });
-
-            console.log('Result',result);
 
             return result;
         },
@@ -135,6 +132,7 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
                 subDoc = {...subDoc,...doc}
             }
 
+            delete subDoc.chosen;
             return subDoc;
         })
 
@@ -188,12 +186,12 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
                                 </SimpleForm>
                                 {mode!=='view'?(
                                     <div style={{display:'flex',flexDirection:'column',justifyContent:'center'}}>
-                                        <Button icon={'trash'} />
+                                        <Button type="button" icon={'trash'} onClick={onClickDelete(subForm.id)} />
                                     </div>
                                 ):null}
                                 {mode!=='view'?(
                                 <div style={{display:'flex',flexDirection:'column',justifyContent:'center'}}>
-                                    <Button className={'dragButton'} icon={'th'} />
+                                    <Button type="button" className={'dragButton'} icon={'th'} />
                                 </div>
                                 ):null}
 
@@ -263,15 +261,12 @@ const SubFormComponent = ({reactElement,childrensElements,name,...props}:ISubFor
 
         },
         validateRequiredSubForm:()=>{
-            console.log(formRef);
             let result = true;
 
                 if(!formRef.validate()) {
                     setError(true);
                     result = false;
                 }
-
-            console.log('Result',result);
 
             return result;
         },
@@ -592,8 +587,6 @@ class SimpleForm extends Component<ISimpleFormProps> {
         } else if(!!this.state.error) {
             this.setState({error:null});
         }
-
-        console.log('fielsWithError',fielsWithError)
 
         return fielsWithError.length===0;
     }

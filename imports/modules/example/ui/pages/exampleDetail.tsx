@@ -105,8 +105,6 @@ export const ExampleDetailContainer = withTracker((props:IExampleDetailContainer
     const subHandle = exampleApi.subscribe('default',{_id:id});
     const exampleDoc = subHandle.ready()?exampleApi.findOne({_id:id}):{}
 
-    console.log('exampleDoc',exampleDoc)
-
     return ({
         screenState,
         exampleDoc,
