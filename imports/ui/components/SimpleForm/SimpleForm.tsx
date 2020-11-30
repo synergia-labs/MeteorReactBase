@@ -629,6 +629,5 @@ class SimpleForm extends Component<ISimpleFormProps> {
                 )
     }
 }
-
 export default SimpleForm
 
