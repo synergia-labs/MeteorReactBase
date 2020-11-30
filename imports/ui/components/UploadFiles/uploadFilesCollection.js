@@ -1,8 +1,6 @@
 import {withTracker} from 'meteor/react-meteor-data';
 import React from 'react';
-
 import Dropzone from 'react-dropzone';
-
 import _ from "lodash";
 import {attachmentsCollection} from '/imports/api/attachmentsCollection';
 import { Image, List, Icon} from 'semantic-ui-react'
@@ -116,11 +114,6 @@ class UploadFile extends React.Component {
             },
         };
         this.props.onChange(event);
-    };
-
-    callOnChange = arquivos => {
-        this.setState({arquivos});
-        this.onChange(arquivos);
     };
 
     getIcon = (mimeType) => {
@@ -240,6 +233,73 @@ class UploadFile extends React.Component {
         }
     };
 
+
+    getListReadOnly = () => {
+        return (this.state.links.length > 0
+            ? <List divided relaxed>
+                {this.state.links.map(item => {
+                    const filetype = item.type ? item.type.split('/')[0] : null;
+
+                    return (
+                        <List.Item
+                            key={item.id}
+                            onClick={() => {
+                                if ((filetype === 'video' || filetype === 'audio') && this.props.doc &&
+                                    this.props.doc._id) {
+                                    window.open(`/media/${this.props.doc._id}/${item.id}`, item.name);
+                                } else {
+                                    this.downloadURI(item.link, item.name);
+                                }
+                            }}
+                        >
+                            <List.Icon size='large' verticalAlign='middle'>
+                                {filetype ? (item.status && item.status === 'InProgress' ? (
+                                    this.getIcon(this.state.uploadFileMimeType || null)
+                                ) : (
+                                    this.getIcon(item.type)
+                                )) : (
+                                    <Icon name="cloud upload"/>
+                                )}
+                            </List.Icon>
+                            <List.Content style={{width:'100%'}}>
+                                <List.Header as='a'>
+                                    {item.name}
+                                </List.Header>
+                                <List.Description as='a'>
+                                    {item.status && item.status === 'InProgress' ? (
+                                        <Progress percent={item.status && item.status === 'InProgress' && item.index ===
+                                        this.currentFileUpload ? this.state.progress : (item.status && item.status ===
+                                        'InProgress' ? 0 : 100)} success>
+                                            The progress was successful
+                                        </Progress>
+                                    ) : (
+                                        item.size / 1024 < 1000 ? `${(item.size / 1024).toFixed(2)}KB` : `${(item.size /
+                                            (1024 * 1024)).toFixed(2)}MB`
+                                    )}
+                                </List.Description>
+                            </List.Content>
+                            <List.Icon size='large' verticalAlign='middle'
+                                       name="cloud download"
+                                       onClick={() => {
+                                           if ((filetype === 'video' || filetype === 'audio') && this.props.doc &&
+                                               this.props.doc._id) {
+                                               window.open(`/media/${this.props.doc._id}/${item.id}`, item.name);
+                                           } else {
+                                               this.downloadURI(item.link, item.name);
+                                           }
+                                       }}
+                            />
+                        </List.Item>
+                    )
+                })
+                }
+            </List>
+            : <span style={{color: '#AAAAAA'}}>{'Não há arquivos'}</span>)
+
+
+    };
+
+
     getList = () => {
         return (this.state.links.length > 0
             ? <List divided relaxed>
@@ -293,86 +353,6 @@ class UploadFile extends React.Component {
 
     };
 
-
-    getTabela = () => {
-        return (
-            <table className="table">
-                <thead>
-                <tr>
-                    <th scope="col" style={{color: '#2d5441'}}> {'name'}</th>
-                    <th scope="col" width="50px"
-                        style={{color: '#2d5441', maxWidth: 50, width: 50, padding: 7, margin: 0}}>{'type'}</th>
-                    <th scope="col" style={{color: '#2d5441', maxWidth: 80, width: 80}}>{'progress'}</th>
-                    <th scope="col" style={{color: '#2d5441', maxWidth: 80, width: 80}}>{'size'}</th>
-                    <th scope="col" style={{color: '#2d5441', maxWidth: 60, width: 60, padding: 7, margin: 0}}>{'actions'}</th>
-                </tr>
-                </thead>
-                <tbody>
-                {this.state.links.length > 0
-                    ? this.state.links.map(item => {
-                        return this.getLinha(item);
-                    })
-                    : null}
-                {this.renderizaMensagemTabelaVazia()}
-                </tbody>
-            </table>
-        );
-    };
-
-    getLinha = item => {
-        return (
-            <tr
-                style={{cursor: 'pointer', color: '#000000'}}
-                key={item.id}
-            >
-                <td scope="row" style={{width: '100%', textAlign: 'left'}}>{item.name}</td>
-                <td scope="row" style={{maxWidth: 50, width: '100%', textAlign: 'center'}}>
-                    {item.status && item.status === 'InProgress' ? (
-                        this.getIcon(this.state.uploadFileMimeType || null)
-                    ) : (
-                        this.getIcon(item.type)
-                    )}
-                </td>
-                <td scope="row" style={{width: '100%', textAlign: 'center'}}>
-                    <Progress size='tiny' percent={item.status && item.status === 'InProgress' && item.index ===
-                    this.currentFileUpload ? this.state.progress : (item.status && item.status ===
-                    'InProgress' ? 0 : 100)} success/>
-
-                    {/*<LinearProgress*/}
-                    {/*    color={item.status && item.status === 'InProgress' ? 'secondary' : 'primary'}*/}
-                    {/*    classes={item.status && item.status === 'InProgress'*/}
-                    {/*        ? {barColorSecondary: this.props.classes.barColorSecondary}*/}
-                    {/*        : undefined}*/}
-                    {/*    variant="determinate"*/}
-                    {/*    value={item.status && item.status === 'InProgress' && item.index ===*/}
-                    {/*    this.currentFileUpload ? this.state.progress : (item.status && item.status ===*/}
-                    {/*    'InProgress' ? 0 : 100)}*/}
-                    {/*/>*/}
-                </td>
-                <td scope="row" style={{width: '100%', textAlign: 'center'}}>
-                    {item.status && item.status === 'InProgress' ? (
-                        item.index === this.currentFileUpload
-                            ? this.state.uploadFileSize || '0KB'
-                            : `0KB/${getFileSize(item.size)}`
-                    ) : (
-                        getFileSize(item.size)
-                    )}
-                </td>
-                <td scope="row" style={{width: '100%', textAlign: 'center'}}>
-                    {item.status && item.status === 'InProgress' ? (
-                        '-'
-                    ) : (
-                        <Icon name="trash alternate"
-                           onClick={() => {
-                               return this.excluirArquivo(item.id);
-                           }}
-                        />
-                    )}
-                </td>
-            </tr>
-        );
-    };
-
     getConteudoDropzoneEmUpload = () => {
         return (
             <div style={{width: '100%'}}>
@@ -406,25 +386,6 @@ class UploadFile extends React.Component {
                 });
             }
         });
-    };
-
-    renderizaMensagemTabelaVazia = () => {
-        if (
-            this.state.linksServidor.length === 0
-            && this.state.links.length === 0
-        ) {
-            return (
-                <tr>
-                    <td scope="row">
-                        <div style={{width: '100%'}}>
-                            {this.props.mensagens.tabelaVazia || null}
-                        </div>
-                    </td>
-                    <td scope="row"/>
-                    <td scope="row"/>
-                </tr>
-            );
-        }
     };
 
     uploadIt = (e, fileUpload) => {
@@ -594,6 +555,7 @@ class UploadFile extends React.Component {
                         textTransform: 'none',
                     }}
                 >{this.props.label}</label>):null}
+                {this.props.readOnly?(this.getListReadOnly()):(
                     <div style={{width: '100%', marginTop: 50}}>
                         <div style={{paddingTop: '10px', paddingBottom: '10px'}}>
                             <Dropzone
@@ -638,6 +600,8 @@ class UploadFile extends React.Component {
                             {this.getList()}
                         </div>
                     </div>
+                )}
+
             </div>
         );
     }
