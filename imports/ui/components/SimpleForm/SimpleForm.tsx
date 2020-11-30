@@ -57,6 +57,25 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
             return true;
 
         },
+        validateRequiredSubForm:()=>{
+            console.log(value);
+            const subSchema= props.fieldSchema&&props.fieldSchema.subSchema
+            const isError:boolean[] = [];
+            value&&value.map(subValue => {
+                Object.keys(subSchema).map(keySchema => {
+                    if(subSchema[keySchema]&&subSchema[keySchema].optional){
+                        return isError.push(false);
+                    }else if(subValue[keySchema]&&subValue[keySchema].length > 0){
+                        return isError.push(false)
+                    }else{
+                        return isError.push(true)
+                    }
+                })
+            })
+            const error:boolean = isError.indexOf(true) !== -1
+            setError(error);
+            return error;
+        },
         setValue:(newValue:any)=>{
             if(hasValue(newValue)) {
                 setValue(newValue);
@@ -129,6 +148,13 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
                 value:newDoc,
             }})
     }
+    const onClickDelete = formId => doc =>{
+        const newDoc = (value||[]).filter(subDoc=>subDoc.id!==formId)
+
+        onChange({target:{
+                value:newDoc,
+            }})
+    }
 
     const label = reactElement.props.label||(props.fieldSchema?props.fieldSchema.label:undefined);
 
@@ -161,7 +187,7 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
                     </SimpleForm>
                         {mode!=='view'?(
                             <div style={{display:'flex',flexDirection:'column',justifyContent:'center'}}>
-                                <Button icon={'trash'} />
+                                <Icon  onClick={onClickDelete(subForm.id)} name={'trash'} />
                             </div>
                         ):null}
 
@@ -205,14 +231,9 @@ const SubFormComponent = ({reactElement,childrensElements,name,...props}:ISubFor
         if(!changeByUser&&!hasValue(value)&&!!hasValue(props.initialValue)) {
             setValue(props.initialValue);
         }
-
-
         if(mode!==props.mode) {
             setMode(props.mode);
         }
-
-
-
     });
 
     props.setFieldMethods({
@@ -233,6 +254,16 @@ const SubFormComponent = ({reactElement,childrensElements,name,...props}:ISubFor
             }
             return true;
 
+        },
+        validateRequiredSubForm:()=>{
+            if(!hasValue(value)) {
+                setError(true);
+                return false;
+            } else if(!!error) {
+                setError(true);
+                return true;
+            }
+            return true;
         },
         setValue:(newValue:any)=>{
             if(hasValue(newValue)) {
@@ -540,7 +571,15 @@ class SimpleForm extends Component<ISimpleFormProps> {
 
         if(this.props.schema) {
             Object.keys(this.fields).forEach(field=>{
-                if(this.props.schema[field]&&!this.props.schema[field].optional&&!this.fields[field].validateRequired()) {
+                if(this.props.schema[field]&&this.props.schema[field].subSchema){
+                    if(this.props.schema[field]&&!this.props.schema[field].optional&&!this.fields[field].validateRequired()){
+                        fielsWithError.push(this.props.schema[field].label);
+                    }
+                    if(this.props.schema[field]&&!this.props.schema[field].optional&&!this.fields[field].validateRequiredSubForm()){
+                        fielsWithError.push(this.props.schema[field].label);
+                    }
+                    fielsWithError.push(this.props.schema[field].label);
+                } else if(this.props.schema[field]&&!this.props.schema[field].optional&&!this.fields[field].validateRequired()) {
                     fielsWithError.push(this.props.schema[field].label);
                 }
             })

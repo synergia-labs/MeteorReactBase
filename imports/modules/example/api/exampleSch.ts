@@ -45,7 +45,7 @@ export const exampleSch = {
         optional: false,
       },
     }
-  }
+  },
   tasks: {
     type: [Object],
     label: 'Tarefas',
@@ -62,7 +62,7 @@ export const exampleSch = {
         type: String,
         label: 'Descrição da Tarefa',
         defaultValue: '',
-        optional: false,
+        optional: true,
       },
     }
   }
