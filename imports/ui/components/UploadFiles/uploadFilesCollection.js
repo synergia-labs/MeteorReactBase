@@ -9,6 +9,7 @@ import { Image, List, Icon} from 'semantic-ui-react'
 import Form from "semantic-ui-react/dist/commonjs/collections/Form";
 import Message from "semantic-ui-react/dist/commonjs/collections/Message";
 import Progress from "semantic-ui-react/dist/commonjs/modules/Progress";
+import {hasValue} from "/imports/libs/hasValue";
 
 const {grey100, grey500, grey700} = ['#eeeeee','#c9c9c9','#a1a1a1'];
 
@@ -95,8 +96,9 @@ class UploadFile extends React.Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
 
         const arquivos = this.props.attachments || [];
+        console.log('ARUIVOS;DidUPdate',arquivos)
 
-        if (!_.isEqual(this.props.attachments, prevProps.attachments)) {
+        if (!_.isEqual(this.props.attachments, prevProps.attachments)||this.props.attachments.length>0&&this.state.links.length===0) {
             this.fileQueue.forEach((arquivo, index) => {
                 arquivos.push(arquivo);
             });
@@ -157,6 +159,8 @@ class UploadFile extends React.Component {
 
     mostrarLinksArquivos = (arquivos) => {
         //const { arquivos, progress } = this.state || [];
+
+        console.log('MostrarLINKS>>>>',arquivos)
         let listaArquivos = [];
         if (arquivos.length > 0) {
             listaArquivos = arquivos.map(item => {
@@ -164,13 +168,7 @@ class UploadFile extends React.Component {
                     ? item.link
                     : attachmentsCollection.attachments.findOne({_id: item._id}).link();
                 return {
-                    name: (
-                        <div style={{width: '100%'}}>
-                            <a href={link} download={item.name} target="_blank">
-                                {item.name}
-                            </a>
-                        </div>
-                    ),
+                    name: item.name,
                     id: item._id,
                     size: item.size,
                     status: item.status || 'Complete',
@@ -244,57 +242,53 @@ class UploadFile extends React.Component {
 
     getList = () => {
         return (this.state.links.length > 0
-            ? this.state.links.map(item => {
-                const filetype = item.type ? item.type.split('/')[0] : null;
+            ? <List divided relaxed>
+                {this.state.links.map(item => {
+                    const filetype = item.type ? item.type.split('/')[0] : null;
 
-                return (
-                    <List.Item
-                        dense
-                        button
-                        divider
-                        key={item.id}
-                    >
+                    return (
+                        <List.Item
+                            key={item.id}
 
-                        {filetype ? (item.status && item.status === 'InProgress' ? (
-                            this.getIcon(this.state.uploadFileMimeType || null)
-                        ) : (
-                            this.getIcon(item.type)
-                        )) : (
-                            <Icon name="cloud upload" />
-                        )}
-                        <List.Item>
-                            <span style={{color: grey700}}>
-
-                            {item.status && item.status === 'InProgress' ? (
-                                <Progress percent={item.status && item.status === 'InProgress' && item.index ===
-                                this.currentFileUpload ? this.state.progress : (item.status && item.status ===
-                                'InProgress' ? 0 : 100)} success>
-                                    The progress was successful
-                                </Progress>
-                                // <LinearProgress
-                                //     color={item.status && item.status === 'InProgress' ? 'secondary' : 'primary'}
-                                //     classes={item.status && item.status === 'InProgress'
-                                //         ? {barColorSecondary: this.props.classes.barColorSecondary}
-                                //         : undefined}
-                                //     variant="determinate"
-                                //     value={}
-                                // />
-                            ) : (
-                                item.size / 1024 < 1000 ? `${(item.size / 1024).toFixed(2)}KB` : `${(item.size /
-                                    (1024 * 1024)).toFixed(2)}MB`
-                            )}
-                          </span>
+                        >
+                            <List.Icon size='large' verticalAlign='middle'>
+                                {filetype ? (item.status && item.status === 'InProgress' ? (
+                                    this.getIcon(this.state.uploadFileMimeType || null)
+                                ) : (
+                                    this.getIcon(item.type)
+                                )) : (
+                                    <Icon name="cloud upload"/>
+                                )}
+                            </List.Icon>
+                            <List.Content style={{width:'100%'}}>
+                                <List.Header as='a'>
+                                    {item.name}
+                                </List.Header>
+                                <List.Description as='a'>
+                                    {item.status && item.status === 'InProgress' ? (
+                                        <Progress percent={item.status && item.status === 'InProgress' && item.index ===
+                                        this.currentFileUpload ? this.state.progress : (item.status && item.status ===
+                                        'InProgress' ? 0 : 100)} success>
+                                            The progress was successful
+                                        </Progress>
+                                    ) : (
+                                        item.size / 1024 < 1000 ? `${(item.size / 1024).toFixed(2)}KB` : `${(item.size /
+                                            (1024 * 1024)).toFixed(2)}MB`
+                                    )}
+                                </List.Description>
+                            </List.Content>
+                            <List.Icon size='large' verticalAlign='middle'
+                                       name="trash alternate"
+                                       onClick={() => {
+                                           return this.excluirArquivo(item.id);
+                                       }}
+                            />
                         </List.Item>
-
-                        <Icon name="trash alternate"
-                         onClick={() => {
-                             return this.excluirArquivo(item.id);
-                         }}
-                        />
-                    </List.Item>
-                )
-            })
-            : null)
+                    )
+                })
+                }
+            </List>
+            : <span style={{color: '#AAAAAA'}}>{'Não há arquivos'}</span>)
 
 
     };
@@ -392,7 +386,7 @@ class UploadFile extends React.Component {
             <div {...getRootProps()}>
                 <input {...getInputProps()} />
                 <Icon name="cloud upload"/>
-                {'Click aqui para add file'}
+                {'Clique aqui para adicionar uma arquivo'}
             </div>
         );
     };
@@ -455,7 +449,7 @@ class UploadFile extends React.Component {
             const uploadInstance = attachmentsCollection.attachments.insert({
                 file,
                 meta: {
-                    fieldName: this.props.id,
+                    fieldName: this.props.name,
                     docId: doc._id || 'Error',
                     userId: Meteor.userId(), // Optional, used to check on server for file tampering
                 },
@@ -490,7 +484,7 @@ class UploadFile extends React.Component {
                 let hasInsertedOjb = false;
                 attachmentsCollection.attachments.find({
                     'meta.docId': self.props.doc._id,
-                    'meta.fieldName': self.props.id,
+                    'meta.fieldName': self.props.name,
                 }).fetch().forEach(file => {
                     attachs.push({
                         name: file.name,
@@ -507,6 +501,8 @@ class UploadFile extends React.Component {
                         hasInsertedOjb = true;
                     }
                 });
+
+                console.log('hasInsertedOjb',hasInsertedOjb)
 
                 if (!hasInsertedOjb) {
                     // const fileInsert = attachmentsCollection.attachments.findOne({ _id: fileObj._id });
@@ -526,10 +522,13 @@ class UploadFile extends React.Component {
 
                 newFileQueue.shift(); // Remove Actual File Upload
 
+                console.log('newFileQueue.length',newFileQueue.length)
+
                 if (newFileQueue.length > 0) {
                     const nextFile = newFileQueue[0];
                     self.uploadIt(null, nextFile);
                 } else {
+                    console.log('attachs',attachs)
                     self.onChange(attachs);
                     // Remove the filename from the upload box
                     const refsName = 'fileinput' + this.props.name + this.props.key;
@@ -556,7 +555,7 @@ class UploadFile extends React.Component {
             });
 
             uploadInstance.on('error', (error, fileObj) => {
-                //console.log(`Error during upload: ${error}`);
+                console.log(`Error during upload: ${error}`);
             });
 
             uploadInstance.on('progress', (progress, fileObj) => {
@@ -581,18 +580,20 @@ class UploadFile extends React.Component {
             return null;
         }
 
+        console.log('LINKS',this.state.links)
+
         return (
-            <div style={{flex: 1, flexWrap: 'wrap', flexDirection: 'column'}}>
-                <Form
-                    error={this.props.error ||
-                    (!this.state.msgError === false) /* ##### REQUIRED FIELDS ##### */}
-                    style={{width: '100%'}}
-                >
-                    <div style={{width: '100%'}}>
-                        <Form.Input htmlFor="select-multiple-chip">
-                            {this.props.label /* ##### REQUIRED FIELDS ##### */}
-                        </Form.Input>
-                    </div>
+            <div style={{flex: 1, flexWrap: 'wrap', flexDirection: 'column',marginBottom:10}}>
+                {hasValue(this.props.label)?(<label
+                    style={{
+                        display: 'block',
+                        margin: '0em 0em 0.28571429rem 0em',
+                        color: '#212121',
+                        fontSize: '0.92857143em',
+                        fontWeight: 'bold',
+                        textTransform: 'none',
+                    }}
+                >{this.props.label}</label>):null}
                     <div style={{width: '100%', marginTop: 50}}>
                         <div style={{paddingTop: '10px', paddingBottom: '10px'}}>
                             <Dropzone
@@ -637,11 +638,6 @@ class UploadFile extends React.Component {
                             {this.getList()}
                         </div>
                     </div>
-                    <Message
-                        error={this.props.helperText}
-                        content={this.props.helperText}
-                    />
-                </Form>
             </div>
         );
     }
@@ -674,9 +670,11 @@ const UploadFilesCollection = withTracker(props => {
     const loading = !handleAttachments.ready();
     const attachments = attachmentsCollection.find({
         'meta.docId': doc ? doc._id || 'No-ID' : 'No-ID',
-        'meta.fieldName': props.id ? props.id || 'No-FieldName' : 'No-FieldName',
+        'meta.fieldName': props.name ? props.name || 'No-FieldName' : 'No-FieldName',
     }).fetch();
     const attachmentsExists = !loading && !!attachments;
+
+    console.log('attachments',attachments);
     return {
         loading,
         attachments,

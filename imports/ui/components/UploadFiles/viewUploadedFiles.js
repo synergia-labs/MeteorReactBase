@@ -3,6 +3,8 @@ import React from 'react';
 import {attachmentsCollection} from '/imports/api/attachmentsCollection';
 import { List, Icon} from 'semantic-ui-react'
 import _ from 'lodash'
+import Progress from "semantic-ui-react/dist/commonjs/modules/Progress";
+import {hasValue} from "/imports/libs/hasValue";
 
 const {grey100, grey500, grey700} = ['#eeeeee','#c9c9c9','#a1a1a1'];
 
@@ -93,6 +95,7 @@ class ViewUploadedFile extends React.Component {
     componentDidMount() {
         const arquivos = this.props.attachments || [];
 
+        console.log('aruiqovs>',arquivos)
         if (!!arquivos) {
             this.setState({arquivos});
             this.mostrarLinksArquivos(arquivos);
@@ -147,6 +150,7 @@ class ViewUploadedFile extends React.Component {
 
     mostrarLinksArquivos = (arquivos) => {
         let listaArquivos = [];
+        console.log('MOSTRAR LINKS',arquivos)
         if (arquivos.length > 0) {
             listaArquivos = arquivos.map(item => {
                 const link = item.status && item.status === 'InProgress'
@@ -164,58 +168,78 @@ class ViewUploadedFile extends React.Component {
             });
         }
 
+
         this.setState({
             links: [...listaArquivos],
         });
     };
 
-
     getList = () => {
         return (this.state.links.length > 0
-            ? this.state.links.map(item => {
-                const filetype = item.type.split('/')[0];
+            ? <List divided relaxed>
+                {this.state.links.map(item => {
+                    const filetype = item.type ? item.type.split('/')[0] : null;
 
-                return (
-                    <List.Item
-                        dense
-                        button
-                        divider
-                        key={item.id}
-                        onClick={() => {
-                            if ((filetype === 'video' || filetype === 'audio') && this.props.doc &&
-                                this.props.doc._id) {
-                                window.open(`/media/${this.props.doc._id}/${item.id}`, item.name);
-                            } else {
-                                this.downloadURI(item.link, item.name);
-                            }
-                        }}
-                    >
-
-                        {item.status && item.status === 'InProgress' ? (
-                            this.getIcon(this.state.uploadFileMimeType || null)
-                        ) : (
-                            this.getIcon(item.type)
-                        )}
-
-                        <span>{item.name}</span>
-
-                        <span>
-                            {item.status && item.status === 'InProgress' ? (
-                                this.state.uploadFileSize || '0KB'
-                            ) : (
-                                item.size / 1024 < 1000 ? `${(item.size / 1024).toFixed(2)}KB` : `${(item.size /
-                                    (1024 * 1024)).toFixed(2)}MB`
-                            )}
-                        </span>
-
-                        <div className="ui divider"/>
-                    </List.Item>
-                )
-            })
+                    return (
+                        <List.Item
+                            key={item.id}
+                            onClick={() => {
+                                if ((filetype === 'video' || filetype === 'audio') && this.props.doc &&
+                                    this.props.doc._id) {
+                                    window.open(`/media/${this.props.doc._id}/${item.id}`, item.name);
+                                } else {
+                                    this.downloadURI(item.link, item.name);
+                                }
+                            }}
+                        >
+                            <List.Icon size='large' verticalAlign='middle'>
+                                {filetype ? (item.status && item.status === 'InProgress' ? (
+                                    this.getIcon(this.state.uploadFileMimeType || null)
+                                ) : (
+                                    this.getIcon(item.type)
+                                )) : (
+                                    <Icon name="cloud upload"/>
+                                )}
+                            </List.Icon>
+                            <List.Content style={{width:'100%'}}>
+                                <List.Header as='a'>
+                                    {item.name}
+                                </List.Header>
+                                <List.Description as='a'>
+                                    {item.status && item.status === 'InProgress' ? (
+                                        <Progress percent={item.status && item.status === 'InProgress' && item.index ===
+                                        this.currentFileUpload ? this.state.progress : (item.status && item.status ===
+                                        'InProgress' ? 0 : 100)} success>
+                                            The progress was successful
+                                        </Progress>
+                                    ) : (
+                                        item.size / 1024 < 1000 ? `${(item.size / 1024).toFixed(2)}KB` : `${(item.size /
+                                            (1024 * 1024)).toFixed(2)}MB`
+                                    )}
+                                </List.Description>
+                            </List.Content>
+                            <List.Icon size='large' verticalAlign='middle'
+                                       name="cloud download"
+                                       onClick={() => {
+                                           if ((filetype === 'video' || filetype === 'audio') && this.props.doc &&
+                                               this.props.doc._id) {
+                                               window.open(`/media/${this.props.doc._id}/${item.id}`, item.name);
+                                           } else {
+                                               this.downloadURI(item.link, item.name);
+                                           }
+                                       }}
+                            />
+                        </List.Item>
+                    )
+                })
+                }
+            </List>
             : <span style={{color: '#AAAAAA'}}>{'Não há arquivos'}</span>)
 
 
     };
+
+
 
     getTabela = () => {
         return (
@@ -310,6 +334,16 @@ class ViewUploadedFile extends React.Component {
 
         return (
             <div style={{flex: 1, flexWrap: 'wrap', flexDirection: 'column'}}>
+                {hasValue(this.props.label)?(<label
+                    style={{
+                        display: 'block',
+                        margin: '0em 0em 0.28571429rem 0em',
+                        color: '#212121',
+                        fontSize: '0.92857143em',
+                        fontWeight: 'bold',
+                        textTransform: 'none',
+                    }}
+                >{this.props.label}</label>):null}
                 {this.getList()}
             </div>
         );
@@ -329,7 +363,7 @@ const ViewUploadedFileCollection = withTracker(props => {
     const loading = !handleAttachments.ready();
     const attachments = attachmentsCollection.find({
         'meta.docId': props.doc ? props.doc._id || 'No-ID' : 'No-ID',
-        'meta.fieldName': props.id ? props.id || 'No-FieldName' : 'No-FieldName',
+        'meta.fieldName': props.name ? props.name || 'No-FieldName' : 'No-FieldName',
     }).fetch();
     const attachmentsExists = !loading && !!attachments;
 

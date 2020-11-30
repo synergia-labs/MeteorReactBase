@@ -5,6 +5,7 @@ import SimpleForm from "../../../../ui/components/SimpleForm/SimpleForm";
 import SimpleImageUploadBase64 from "../../../../ui/components/ImageUpload/SimpleImageUploadBase64";
 import {Form,Container, Header,Button} from "semantic-ui-react";
 import UploadFilesCollection from "/imports/ui/components/UploadFiles/uploadFilesCollection";
+import ViewUploadedFiles from "/imports/ui/components/UploadFiles/viewUploadedFiles";
 
 interface IExampleDetail {
     screenState:string;
@@ -45,6 +46,9 @@ const ExampleDetail = ({screenState,loading,exampleDoc,save,history}:IExampleDet
                         name='description'
                     />
                 </Form.Group>
+                {screenState==='view'?
+                    <ViewUploadedFiles name='files' label={'Arquivos'} doc={exampleDoc}/>:
+                    <UploadFilesCollection name='files' label={'Arquivos'} doc={exampleDoc}/>}
                 <Form.Group key={'Buttons'}>
                     <Button content={screenState==='view'?'Voltar':'Cancelar'}
                             onClick={screenState==='edit'?()=>history.push(`/example/view/${exampleDoc._id}`):()=>history.push(`/example/list`)}
@@ -64,7 +68,7 @@ const ExampleDetail = ({screenState,loading,exampleDoc,save,history}:IExampleDet
                     ):null}
                 </Form.Group>
             </SimpleForm>
-            <UploadFilesCollection doc={{_id:'8s7dt8we'}}/>
+
         </Container>
 )
 }

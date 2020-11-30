@@ -18,7 +18,13 @@ export const exampleSch = {
     label: 'Descrição',
     defaultValue: '',
     optional: true,
-
+  },
+  files: {
+    type: [Object],
+    label: 'Arquivos',
+    defaultValue: '',
+    optional: true,
+    isUpload:true,
   },
 
 };
