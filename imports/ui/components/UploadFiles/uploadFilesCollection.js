@@ -94,7 +94,6 @@ class UploadFile extends React.Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
 
         const arquivos = this.props.attachments || [];
-        console.log('ARUIVOS;DidUPdate',arquivos)
 
         if (!_.isEqual(this.props.attachments, prevProps.attachments)||this.props.attachments.length>0&&this.state.links.length===0) {
             this.fileQueue.forEach((arquivo, index) => {
@@ -153,7 +152,6 @@ class UploadFile extends React.Component {
     mostrarLinksArquivos = (arquivos) => {
         //const { arquivos, progress } = this.state || [];
 
-        console.log('MostrarLINKS>>>>',arquivos)
         let listaArquivos = [];
         if (arquivos.length > 0) {
             listaArquivos = arquivos.map(item => {
@@ -429,11 +427,11 @@ class UploadFile extends React.Component {
 
             // These are the event functions, don't need most of them, it shows where we are in the process
             uploadInstance.on('start', () => {
-                 console.log('Starting');
+                 // console.log('Starting');
             });
 
             uploadInstance.on('end', (error, fileObj) => {
-                 console.log('End');
+                 // console.log('End');
                 self.setState({
                     progress: 0,
                 });
@@ -463,7 +461,6 @@ class UploadFile extends React.Component {
                     }
                 });
 
-                console.log('hasInsertedOjb',hasInsertedOjb)
 
                 if (!hasInsertedOjb) {
                     // const fileInsert = attachmentsCollection.attachments.findOne({ _id: fileObj._id });
@@ -483,13 +480,13 @@ class UploadFile extends React.Component {
 
                 newFileQueue.shift(); // Remove Actual File Upload
 
-                console.log('newFileQueue.length',newFileQueue.length)
+                // console.log('newFileQueue.length',newFileQueue.length)
 
                 if (newFileQueue.length > 0) {
                     const nextFile = newFileQueue[0];
                     self.uploadIt(null, nextFile);
                 } else {
-                    console.log('attachs',attachs)
+                    // console.log('attachs',attachs)
                     self.onChange(attachs);
                     // Remove the filename from the upload box
                     const refsName = 'fileinput' + this.props.name + this.props.key;
@@ -540,8 +537,6 @@ class UploadFile extends React.Component {
         if (!doc || !doc._id) {
             return null;
         }
-
-        console.log('LINKS',this.state.links)
 
         return (
             <div style={{flex: 1, flexWrap: 'wrap', flexDirection: 'column',marginBottom:10}}>
@@ -638,7 +633,6 @@ const UploadFilesCollection = withTracker(props => {
     }).fetch();
     const attachmentsExists = !loading && !!attachments;
 
-    console.log('attachments',attachments);
     return {
         loading,
         attachments,

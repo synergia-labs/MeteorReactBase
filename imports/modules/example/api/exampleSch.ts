@@ -26,7 +26,26 @@ export const exampleSch = {
     optional: true,
     isUpload:true,
   },
-
+  contacts: {
+    type: Object,
+    label: 'Contatos',
+    defaultValue: '',
+    optional: true,
+    subSchema: {
+      phone: {
+        type: String,
+        label: 'Telefone',
+        defaultValue: '',
+        optional: false,
+      },
+      celphone: {
+        type: String,
+        label: 'Celular',
+        defaultValue: '',
+        optional: false,
+      },
+    }
+  }
 };
 
 export interface IExample {

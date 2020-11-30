@@ -45,6 +45,16 @@ const ExampleDetail = ({screenState,loading,exampleDoc,save,history}:IExampleDet
                         name='description'
                     />
                 </Form.Group>
+                <Form.Group key={'fields'} formType={'subform'} name={'contacts'}>
+                    <Form.Input
+                        placeholder='Telefone'
+                        name='phone'
+                    />
+                    <Form.Input
+                        placeholder='Celular'
+                        name='celphone'
+                    />
+                </Form.Group>
                 <UploadFilesCollection
                     name='files'
                     label={'Arquivos'}

@@ -1,8 +1,145 @@
 import React, { Component } from 'react'
-import { Form } from 'semantic-ui-react'
+import {Container, Form} from 'semantic-ui-react'
 import {hasValue, isBoolean} from "../../../libs/hasValue";
 import _ from 'lodash';
 import {Message,Icon } from 'semantic-ui-react'
+import {exampleApi} from "/imports/modules/example/api/exampleApi";
+
+
+interface ISubFormComponent {
+    reactElement:any;
+    childrensElements:any;
+    name:string;
+    mode:string;
+    fieldSchema:object;
+    initialValue?:any;
+    setDoc: ({})=>void;
+    setFieldMethods: ({})=>any;
+
+}
+
+const SubFormComponent = ({reactElement,childrensElements,name,...props}:IFieldComponent) => {
+
+    const [error,setError] = React.useState(false)
+    const [value,setValue] = React.useState(props.initialValue||'')
+    const [mode,setMode] = React.useState(props.mode||'edit')
+    const [changeByUser,setChangeByUser] = React.useState(false)
+
+    React.useEffect(() => {
+
+        if(!changeByUser&&!hasValue(value)&&!!hasValue(props.initialValue)) {
+            setValue(props.initialValue);
+        }
+
+
+        if(mode!==props.mode) {
+            setMode(props.mode);
+        }
+
+
+
+    });
+
+    props.setFieldMethods({
+        validateRequired: (hasError:boolean)=>{
+            if(hasError) {
+                setError(true);
+                return false;
+            } else if(hasValue(hasError)&&hasError===false) {
+                setError(false);
+                return true;
+            }
+            if(!hasValue(value)) {
+                setError(true);
+                return false;
+            } else if(!!error) {
+                setError(true);
+                return true;
+            }
+            return true;
+
+        },
+        setValue:(newValue:any)=>{
+            if(hasValue(newValue)) {
+                setValue(newValue);
+                return true;
+            }
+            return false;
+
+        },
+        setMode:(newMode:string)=>{
+            if(newMode!==mode) {
+                setMode(newMode);
+                return true;
+            }
+            return false;
+        },
+    })
+
+
+
+    const onChange = (e,fieldData={})=>{
+        const field = {...(props.fieldSchema?props.fieldSchema:{}),...(e?e.target:{}),
+            ...(fieldData&&fieldData.name?fieldData:{})};
+
+        if(props.fieldSchema&&props.fieldSchema.type===Boolean&&isBoolean(field.checked)) {
+            setValue(field.checked);
+            props.setDoc({[name]:field.checked});
+            if(!changeByUser) {
+                setChangeByUser(true);
+            }
+            if(reactElement.props.onChange) {
+                reactElement.props.onChange(e,{...field,value:field.checked});
+            }
+        } else {
+            setValue(field.value);
+            props.setDoc({[name]:field.value});
+            if(!changeByUser) {
+                setChangeByUser(true);
+            }
+            if(reactElement.props.onChange) {
+                reactElement.props.onChange(e,field);
+            }
+        }
+
+
+
+    }
+
+    const onFormChangeHandle = (doc) => {
+        console.log('onFormChangeHandle',doc);
+        onChange({target:{
+            value:doc,
+            }})
+    }
+
+    const label = reactElement.props.label||(props.fieldSchema?props.fieldSchema.label:undefined);
+    return (
+        <>
+            {hasValue(label)?(<label
+                style={{
+                    display: 'block',
+                    margin: '0em 0em 0.28571429rem 0em',
+                    color: '#212121',
+                    fontSize: '0.92857143em',
+                    fontWeight: 'bold',
+                    textTransform: 'none',
+                }}
+            >{label}</label>):null}
+        <SimpleForm
+                mode={props.readOnly?'view':'edit'}
+                schema={props.fieldSchema&&props.fieldSchema.subSchema?props.fieldSchema.subSchema:undefined}
+                doc={value}
+                onFormChange={onFormChangeHandle}
+                >
+            {childrensElements}
+        </SimpleForm>
+            </>
+    );
+}
+
+
+
 
 interface IFieldComponent {
     reactElement:any;
@@ -14,7 +151,6 @@ interface IFieldComponent {
     setFieldMethods: ({})=>any;
 
 }
-
 const FieldComponent = ({reactElement,name,...props}:IFieldComponent) => {
 
     const [error,setError] = React.useState(false)
@@ -120,6 +256,7 @@ interface ISimpleFormProps {
     doc?:object;
     loading?:boolean;
     styles?:object;
+    onFormChange:(onChange:()=>void)=> void;
 }
 
 class SimpleForm extends Component<ISimpleFormProps> {
@@ -133,6 +270,9 @@ class SimpleForm extends Component<ISimpleFormProps> {
 
     setDoc = (newDoc) => {
     this.docValue = {...this.docValue,...newDoc};
+    if(this.props.onFormChange) {
+        this.props.onFormChange(this.docValue)
+    }
     }
 
     getDoc = () => {
@@ -156,7 +296,21 @@ class SimpleForm extends Component<ISimpleFormProps> {
             return element;
         }
         self.fields[element.props.name]={type:element.type.name,};
-        if(element.type.name==='FormGroup'||element.type.name==='Segment'||React.Children.toArray(element.props.children).length>0) {
+        if(element.type.name==='FormGroup'&&element.props.formType==='subform'&&!!element.props.name) {
+            console.log(element,'<>',element.props.formType,'<>',element.props.name)
+            return <SubFormComponent
+                name={element.props.name}
+                childrensElements={element.props.children}
+                key={element.props.name?element.props.name:('el'+index)}
+                fieldSchema={self.props.schema?self.props.schema[element.props.name]:undefined}
+                initialValue={self.props.doc?self.props.doc[element.props.name]:''}
+                reactElement={element}
+                setDoc={this.setDoc}
+                mode={self.props.mode}
+                setFieldMethods={(methods)=>self.fields[element.props.name]={...self.fields[element.props.name],...methods}}
+            />
+
+        } else if(element.type.name==='FormGroup'||element.type.name==='Segment'||React.Children.toArray(element.props.children).length>0) {
             const subElements = React.Children.toArray(element.props.children).map((element,index)=>{
                 return self.wrapElement(element,index)
             });
