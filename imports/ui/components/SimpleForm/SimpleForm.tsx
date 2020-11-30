@@ -5,6 +5,7 @@ import _ from 'lodash';
 import {Message,Icon } from 'semantic-ui-react'
 import {exampleApi} from "/imports/modules/example/api/exampleApi";
 import shortid from 'shortid';
+import { ReactSortable } from "react-sortablejs";
 
 
 interface ISubFormArrayComponent {
@@ -30,27 +31,17 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
     const formRefs = {};
 
     React.useEffect(() => {
-        if(!changeByUser&&!hasValue(value)&&!!hasValue(initialValue)) {
+        if(!changeByUser&&(!value||value.length===0)&&(initialValue||[]).length>0) {
             setValue(initialValue);
         }
         if(mode!==props.mode) {
             setMode(props.mode);
         }
-    },[initialValue,mode]);
+    });
 
     props.setFieldMethods({
         validateRequired: (hasError:boolean)=>{
-            if(hasError) {
-                setError(true);
-                return false;
-            } else if(hasValue(hasError)&&hasError===false) {
-                setError(false);
-                return true;
-            }
             if(!hasValue(value)) {
-                setError(true);
-                return false;
-            } else if(!!error) {
                 setError(true);
                 return false;
             }
@@ -58,23 +49,19 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
 
         },
         validateRequiredSubForm:()=>{
-            console.log(value);
-            const subSchema= props.fieldSchema&&props.fieldSchema.subSchema
-            const isError:boolean[] = [];
-            value&&value.map(subValue => {
-                Object.keys(subSchema).map(keySchema => {
-                    if(subSchema[keySchema]&&subSchema[keySchema].optional){
-                        return isError.push(false);
-                    }else if(subValue[keySchema]&&subValue[keySchema].length > 0){
-                        return isError.push(false)
-                    }else{
-                        return isError.push(true)
-                    }
-                })
-            })
-            const error:boolean = isError.indexOf(true) !== -1
-            setError(error);
-            return error;
+            console.log(formRefs);
+            let result = true;
+            Object.keys(formRefs).forEach(key=>{
+                const subFormRef = formRefs[key];
+                if(!subFormRef.validate()) {
+                    setError(true);
+                    result = false;
+                }
+            });
+
+            console.log('Result',result);
+
+            return result;
         },
         setValue:(newValue:any)=>{
             if(hasValue(newValue)) {
@@ -102,7 +89,7 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
         if(props.fieldSchema&&props.fieldSchema.type===Boolean&&isBoolean(field.checked)) {
             setValue(field.checked);
             props.setDoc({[name]:field.checked});
-            if(!changeByUser) {
+            if(!changeByUser&&(field.value||[]).length>0) {
                 setChangeByUser(true);
             }
             if(reactElement.props.onChange) {
@@ -111,7 +98,7 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
         } else {
             setValue(field.value);
             props.setDoc({[name]:field.value});
-            if(!changeByUser) {
+            if(!changeByUser&&(field.value||[]).length>0) {
                 setChangeByUser(true);
             }
             if(reactElement.props.onChange) {
@@ -123,6 +110,13 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
 
     }
 
+    const onSortDocs = (list) => {
+        setValue(list);
+        setStringValue(list.toString());
+        onChange({target:{
+                value:list,
+            }})
+    }
 
     const addSubForm = () => {
         const newValue = (value||[]);
@@ -171,30 +165,46 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
                 }}
             >{label}</label>):null}
             <div style={{width:'100%',marginLeft:10}}>
-            {(value||[]).map(subForm=>{
 
-                return (
-                    <div style={{border:'1px solid #DDD',margin:3,display:'flex',flexDirection:'row'}}>
-                    <SimpleForm
-                        ref={refForm=>formRefs[subForm.id]=refForm}
-                        key={subForm.id}
-                        mode={mode}
-                        schema={props.fieldSchema&&props.fieldSchema.subSchema?props.fieldSchema.subSchema:undefined}
-                        doc={subForm}
-                        onFormChange={onFormChangeHandle(subForm.id)}
-                    >
-                        {childrensElements}
-                    </SimpleForm>
-                        {mode!=='view'?(
-                            <div style={{display:'flex',flexDirection:'column',justifyContent:'center'}}>
-                                <Icon  onClick={onClickDelete(subForm.id)} name={'trash'} />
+                <ReactSortable
+                    disabled={mode==='view'}
+                    list={value||[]}
+                    setList={onSortDocs}
+                    handle={'.dragButton'}
+                >
+                    {(value||[]).map(subForm=>{
+
+                        return (
+                            <div key={subForm.id} style={{border:'1px solid #DDD',margin:3,display:'flex',flexDirection:'row'}}>
+                                <SimpleForm
+                                    ref={refForm=>formRefs[subForm.id]=refForm}
+                                    key={subForm.id}
+                                    mode={mode}
+                                    schema={props.fieldSchema&&props.fieldSchema.subSchema?props.fieldSchema.subSchema:undefined}
+                                    doc={subForm}
+                                    onFormChange={onFormChangeHandle(subForm.id)}
+                                >
+                                    {childrensElements}
+                                </SimpleForm>
+                                {mode!=='view'?(
+                                    <div style={{display:'flex',flexDirection:'column',justifyContent:'center'}}>
+                                        <Button icon={'trash'} />
+                                    </div>
+                                ):null}
+                                {mode!=='view'?(
+                                <div style={{display:'flex',flexDirection:'column',justifyContent:'center'}}>
+                                    <Button className={'dragButton'} icon={'th'} />
+                                </div>
+                                ):null}
+
                             </div>
-                        ):null}
+                        )
 
-                    </div>
-                    )
+                    })}
+                </ReactSortable>
 
-            })}
+
+
             </div>
             {mode!=='view'?(<div style={{display:'flex',flexDirection:'row',justifyContent:'center'}}>
                 <Button icon={'add'}
@@ -226,44 +236,44 @@ const SubFormComponent = ({reactElement,childrensElements,name,...props}:ISubFor
     const [mode,setMode] = React.useState(props.mode||'edit')
     const [changeByUser,setChangeByUser] = React.useState(false)
 
+    let formRef = {}
+
     React.useEffect(() => {
 
         if(!changeByUser&&!hasValue(value)&&!!hasValue(props.initialValue)) {
             setValue(props.initialValue);
         }
+
+
         if(mode!==props.mode) {
             setMode(props.mode);
         }
+
+
+
     });
 
     props.setFieldMethods({
-        validateRequired: (hasError:boolean)=>{
-            if(hasError) {
-                setError(true);
-                return false;
-            } else if(hasValue(hasError)&&hasError===false) {
-                setError(false);
-                return true;
-            }
+        validateRequired: ()=>{
             if(!hasValue(value)) {
                 setError(true);
                 return false;
-            } else if(!!error) {
-                setError(true);
-                return true;
             }
             return true;
 
         },
         validateRequiredSubForm:()=>{
-            if(!hasValue(value)) {
-                setError(true);
-                return false;
-            } else if(!!error) {
-                setError(true);
-                return true;
-            }
-            return true;
+            console.log(formRef);
+            let result = true;
+
+                if(!formRef.validate()) {
+                    setError(true);
+                    result = false;
+                }
+
+            console.log('Result',result);
+
+            return result;
         },
         setValue:(newValue:any)=>{
             if(hasValue(newValue)) {
@@ -333,6 +343,7 @@ const SubFormComponent = ({reactElement,childrensElements,name,...props}:ISubFor
             >{label}</label>):null}
             <div style={{border:'1px solid #ddd',margin:3,marginLeft:10}}>
                 <SimpleForm
+                        ref={fRef=>formRef=fRef}
                         mode={mode}
                         schema={props.fieldSchema&&props.fieldSchema.subSchema?props.fieldSchema.subSchema:undefined}
                         doc={value}
@@ -381,18 +392,8 @@ const FieldComponent = ({reactElement,name,...props}:IFieldComponent) => {
     });
 
     props.setFieldMethods({
-        validateRequired: (hasError:boolean)=>{
-            if(hasError) {
-                setError(true);
-                return false;
-            } else if(hasValue(hasError)&&hasError===false) {
-                setError(false);
-                return true;
-            }
+        validateRequired: ()=>{
             if(!hasValue(value)) {
-                setError(true);
-                return false;
-            } else if(!!error) {
                 setError(true);
                 return false;
             }
@@ -575,10 +576,11 @@ class SimpleForm extends Component<ISimpleFormProps> {
                     if(this.props.schema[field]&&!this.props.schema[field].optional&&!this.fields[field].validateRequired()){
                         fielsWithError.push(this.props.schema[field].label);
                     }
-                    if(this.props.schema[field]&&!this.props.schema[field].optional&&!this.fields[field].validateRequiredSubForm()){
+                    if(!this.props.schema[field].optional&&!this.fields[field].validateRequiredSubForm()) {
                         fielsWithError.push(this.props.schema[field].label);
                     }
-                    fielsWithError.push(this.props.schema[field].label);
+
+
                 } else if(this.props.schema[field]&&!this.props.schema[field].optional&&!this.fields[field].validateRequired()) {
                     fielsWithError.push(this.props.schema[field].label);
                 }
@@ -591,6 +593,7 @@ class SimpleForm extends Component<ISimpleFormProps> {
             this.setState({error:null});
         }
 
+        console.log('fielsWithError',fielsWithError)
 
         return fielsWithError.length===0;
     }
