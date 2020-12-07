@@ -40,7 +40,14 @@ export default ({name,label,value,onChange,readOnly,error}:IBaseSimpleFormCompon
     }
 
     return (<>
-        {hasValue(label)?(<label>{label}</label>):null}
+        {hasValue(label)?(<label style={{
+            display: 'block',
+            margin: '0em 0em 0.28571429rem 0em',
+            color: '#212121',
+            fontSize: '0.92857143em',
+            fontWeight: 'bold',
+            textTransform: 'none',
+        }}>{label}</label>):null}
         <FileInputComponent
             defaultFiles={hasValue(value)?[value]:undefined}
             labelText={""}

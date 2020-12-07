@@ -111,7 +111,11 @@ class UploadFile extends React.Component {
             target: {
                 value,
             },
+
         };
+        if(this.props.saveOnChange) {
+            this.props.saveOnChange({...this.props.doc,[this.props.name]:value});
+        }
         this.props.onChange(event);
     };
 
@@ -231,6 +235,12 @@ class UploadFile extends React.Component {
         }
     };
 
+    downloadURI = (uri, name) => {
+        var link = document.createElement('a');
+        link.download = name;
+        link.href = uri;
+        link.click();
+    };
 
     getListReadOnly = () => {
         return (this.state.links.length > 0
@@ -307,7 +317,14 @@ class UploadFile extends React.Component {
                     return (
                         <List.Item
                             key={item.id}
-
+                            onClick={() => {
+                                if ((filetype === 'video' || filetype === 'audio') && this.props.doc &&
+                                    this.props.doc._id) {
+                                    window.open(`/media/${this.props.doc._id}/${item.id}`, item.name);
+                                } else {
+                                    this.downloadURI(item.link, item.name);
+                                }
+                            }}
                         >
                             <List.Icon size='large' verticalAlign='middle'>
                                 {filetype ? (item.status && item.status === 'InProgress' ? (

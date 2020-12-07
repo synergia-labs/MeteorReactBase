@@ -3,7 +3,7 @@ import {Button, Container, Form} from 'semantic-ui-react'
 import {hasValue, isBoolean} from "../../../libs/hasValue";
 import _ from 'lodash';
 import {Message,Icon } from 'semantic-ui-react'
-import {exampleApi} from "/imports/modules/example/api/exampleApi";
+import {groupApi} from "/imports/modules/group/api/groupApi";
 import shortid from 'shortid';
 import { ReactSortable } from "react-sortablejs";
 
