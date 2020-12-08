@@ -187,7 +187,6 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
                     handle={'.dragButton'}
                 >
                     {(value||[]).map(subForm=>{
-                        console.log(subForm);
 
                         return (
                             <div key={subForm.id} style={{border:'1px solid #DDD',margin:3,display:'flex',flexDirection:'row'}}>
