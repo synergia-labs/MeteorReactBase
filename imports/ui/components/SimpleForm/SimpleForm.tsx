@@ -36,6 +36,13 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
         }
         if(mode!==props.mode) {
             setMode(props.mode);
+            if(props.mode==='view') {
+                setChangeByUser(false);
+            }            
+
+            if(props.mode==='view'&&error) {
+                setError(false);
+            }            
         }
     });
 
@@ -103,11 +110,20 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
             }
         }
 
+        if(hasValue(field.value)) {
+            setError(false);
+        }
+
 
 
     }
 
-    const onSortDocs = (list) => {
+    const onSortDocs = (newList) => {
+
+        const list = newList.map(l=>{
+            delete l.chosen;
+            return l;
+        })
         setValue(list);
         setStringValue(list.toString());
         onChange({target:{
@@ -151,12 +167,12 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
     const label = reactElement.props.label||(props.fieldSchema?props.fieldSchema.label:undefined);
 
     return (
-        <div style={{width:'100%'}}>
+        <div style={{marginTop:5,width:'100%',backgroundColor:error?'#FFF6F6':undefined}}>
             {hasValue(label)?(<label
                 style={{
                     display: 'block',
                     margin: '0em 0em 0.28571429rem 0em',
-                    color: '#212121',
+                    color: error?'#9F3A38':'#212121',
                     fontSize: '0.92857143em',
                     fontWeight: 'bold',
                     textTransform: 'none',
@@ -171,6 +187,7 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
                     handle={'.dragButton'}
                 >
                     {(value||[]).map(subForm=>{
+                        console.log(subForm);
 
                         return (
                             <div key={subForm.id} style={{border:'1px solid #DDD',margin:3,display:'flex',flexDirection:'row'}}>
@@ -206,6 +223,7 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
             </div>
             {mode!=='view'?(<div style={{display:'flex',flexDirection:'row',justifyContent:'center'}}>
                 <Button icon={'add'}
+                        style={{color:error?'#9F3A38':undefined}}
                         type="button"
                         onClick={addSubForm}
                 />
@@ -245,6 +263,13 @@ const SubFormComponent = ({reactElement,childrensElements,name,...props}:ISubFor
 
         if(mode!==props.mode) {
             setMode(props.mode);
+                        
+            if(props.mode==='view') {
+                setChangeByUser(false);
+            }            
+            if(props.mode==='view'&&error) {
+                setError(false);
+            }
         }
 
 
@@ -313,6 +338,10 @@ const SubFormComponent = ({reactElement,childrensElements,name,...props}:ISubFor
             }
         }
 
+        if(hasValue(field.value)) {
+            setError(false);
+        }
+
 
 
     }
@@ -325,12 +354,12 @@ const SubFormComponent = ({reactElement,childrensElements,name,...props}:ISubFor
 
     const label = reactElement.props.label||(props.fieldSchema?props.fieldSchema.label:undefined);
     return (
-        <div style={{width:'100%'}}>
-            {hasValue(label)?(<label
+            <div style={{marginTop:5,width:'100%'}}>
+                {hasValue(label)?(<label
                 style={{
                     display: 'block',
                     margin: '0em 0em 0.28571429rem 0em',
-                    color: '#212121',
+                    color: error?'#9F3A38':'#212121',
                     fontSize: '0.92857143em',
                     fontWeight: 'bold',
                     textTransform: 'none',
@@ -380,6 +409,13 @@ const FieldComponent = ({reactElement,name,...props}:IFieldComponent) => {
 
         if(mode!==props.mode) {
             setMode(props.mode);
+            if(props.mode==='view') {
+                setChangeByUser(false);
+            }            
+
+            if(props.mode==='view'&&error) {
+                setError(false);
+            }            
         }
         
         
@@ -438,7 +474,9 @@ const FieldComponent = ({reactElement,name,...props}:IFieldComponent) => {
             }            
         }
 
-
+        if(hasValue(field.value)) {
+            setError(false);
+        }
 
     }
 
@@ -568,15 +606,18 @@ class SimpleForm extends Component<ISimpleFormProps> {
         if(this.props.schema) {
             Object.keys(this.fields).forEach(field=>{
                 if(this.props.schema[field]&&this.props.schema[field].subSchema){
-                    if(this.props.schema[field]&&!this.props.schema[field].optional&&!this.fields[field].validateRequired()){
+                    if(this.props.schema[field]&&!this.props.schema[field].optional&&!this.fields[field].validateRequired()
+                    &&fielsWithError.indexOf(this.props.schema[field].label)===-1){
                         fielsWithError.push(this.props.schema[field].label);
                     }
-                    if(!this.props.schema[field].optional&&!this.fields[field].validateRequiredSubForm()) {
+                    if(!this.props.schema[field].optional&&!this.fields[field].validateRequiredSubForm()
+                    &&fielsWithError.indexOf(this.props.schema[field].label)===-1){
                         fielsWithError.push(this.props.schema[field].label);
                     }
 
 
-                } else if(this.props.schema[field]&&!this.props.schema[field].optional&&!this.fields[field].validateRequired()) {
+                } else if(this.props.schema[field]&&!this.props.schema[field].optional&&!this.fields[field].validateRequired()
+                &&fielsWithError.indexOf(this.props.schema[field].label)===-1){
                     fielsWithError.push(this.props.schema[field].label);
                 }
             })
@@ -616,15 +657,15 @@ class SimpleForm extends Component<ISimpleFormProps> {
 
         return (
             <div style={this.props.style||{width:'100%'}}>
-                <Form  onSubmit={this.onSubmitForm} loading={this.props.loading}>
-                    {this.formElements}
-                </Form>
                 {this.state.error?(
                 <Message attached='bottom' warning>
                     <Icon name='warning' />
-                    {'Há erros nos seguintes campos:'+this.state.error.join(', ')}
+                    {'Há erros nos seguintes campos: '+this.state.error.join(', ')}
                 </Message>
-                ):null}
+                ):null}                
+                <Form  onSubmit={this.onSubmitForm} loading={this.props.loading}>
+                    {this.formElements}
+                </Form>
             </div>
                 )
     }

@@ -556,12 +556,14 @@ class UploadFile extends React.Component {
         }
 
         return (
-            <div style={{flex: 1, flexWrap: 'wrap', flexDirection: 'column',marginBottom:10}}>
+            <div style={{flex: 1, flexWrap: 'wrap', flexDirection: 'column',marginBottom:10,
+            backgroundColor:this.props.error?'#FFF6F6':undefined
+            }}>
                 {hasValue(this.props.label)?(<label
                     style={{
                         display: 'block',
                         margin: '0em 0em 0.28571429rem 0em',
-                        color: '#212121',
+                        color: this.props.error?'#9F3A38':'#212121',
                         fontSize: '0.92857143em',
                         fontWeight: 'bold',
                         textTransform: 'none',
