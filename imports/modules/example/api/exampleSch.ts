@@ -3,7 +3,7 @@ export const exampleSch = {
     type: String,
     label: 'Imagem',
     defaultValue: '',
-    optional: false,
+    optional: true,
     isImage: true,
   },
   title: {
@@ -23,7 +23,7 @@ export const exampleSch = {
     type: [Object],
     label: 'Arquivos',
     defaultValue: '',
-    optional: false,
+    optional: true,
     isUpload:true,
   },
   contacts: {
@@ -50,7 +50,7 @@ export const exampleSch = {
     type: [Object],
     label: 'Tarefas',
     defaultValue: '',
-    optional: false,
+    optional: true,
     subSchema: {
       name: {
         type: String,
