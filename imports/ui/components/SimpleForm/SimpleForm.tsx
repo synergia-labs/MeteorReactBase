@@ -192,6 +192,7 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
                         return (
                             <div key={subForm.id} style={{border:'1px solid #DDD',margin:3,display:'flex',flexDirection:'row'}}>
                                 <SimpleForm
+                                    isSubForm={true}
                                     ref={refForm=>formRefs[subForm.id]=refForm}
                                     key={subForm.id}
                                     mode={mode}
@@ -367,6 +368,7 @@ const SubFormComponent = ({reactElement,childrensElements,name,...props}:ISubFor
             >{label}</label>):null}
             <div style={{border:'1px solid #ddd',margin:3,marginLeft:10}}>
                 <SimpleForm
+                        isSubForm={true}
                         ref={fRef=>formRef=fRef}
                         mode={mode}
                         schema={props.fieldSchema&&props.fieldSchema.subSchema?props.fieldSchema.subSchema:undefined}
@@ -662,10 +664,15 @@ class SimpleForm extends Component<ISimpleFormProps> {
                     <Icon name='warning' />
                     {'Há erros nos seguintes campos: '+this.state.error.join(', ')}
                 </Message>
-                ):null}                
-                <Form  onSubmit={this.onSubmitForm} loading={this.props.loading}>
-                    {this.formElements}
-                </Form>
+                ):null}
+                {this.props.isSubForm?(
+                    this.formElements
+                ):(
+                    <Form  onSubmit={this.onSubmitForm} loading={this.props.loading}>
+                        {this.formElements}
+                    </Form>
+                )}                
+
             </div>
                 )
     }

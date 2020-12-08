@@ -15,7 +15,7 @@
     "meteor-node-stubs": "^1.0.1",
     "prop-types": "^15.7.2",
     "react": "^17.0.1",
-    "react-addons-pure-render-mixin": "^15.6.2",
+    "react-addons-pure-render-mixin": "^15.6.3",
     "react-dom": "^17.0.1",
     "react-dropzone": "^11.2.4",
     "react-file-input-previews-base64": "^1.0.8",
@@ -37,14 +37,14 @@
   },
   "devDependencies": {
     "@types/meteor": "^1.4.64",
-    "@types/mocha": "^8.0.3",
-    "@types/react": "^16.9.56",
-    "@types/react-dom": "^16.9.9",
-    "autoprefixer": "^10.0.1",
+    "@types/mocha": "^8.0.4",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "autoprefixer": "^10.1.0",
     "less": "^3.12.2",
-    "postcss": "^8.1.1",
+    "postcss": "^8.2.0",
     "postcss-load-config": "^3.0.0",
-    "typescript": "^4.0.5"
+    "typescript": "^4.1.2"
   },
   "postcss": {
     "plugins": {

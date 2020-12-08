@@ -59,10 +59,11 @@ export default function SimpleTable({schema,data,onClick,actions}:ISimpleTable) 
                     {data.map((row,index) => (
                         <Table.Row onClick={handleRowClick(row._id, row)} style={{...(row.rowStyle?row.rowStyle:{}),cursor:hasOnClick?'pointer':undefined} } key={row._id||row.key||row.name||'row'+index}>
                             {cols.map((col,index)=>{
-                                return <Table.Cell key={col.name+col.label} style={{width:col.type==='image'?80:undefined}}>{renderType(col.type,row[col.field])}</Table.Cell>
+                                return <Table.Cell key={col.name+col.label} style={{...(schema&&schema[col.field]&&schema[col.field].isImage?{display:'flex',flexDirection:'row',justifyContent:'center'}:{}),
+                                width:col.type==='image'?80:undefined}}>{renderType(col.type,row[col.field])}</Table.Cell>
                             })}
                             {actions?(
-                                <Table.Cell>
+                                <Table.Cell style={{textAlign:'center'}}>
                                     {actions.map(act=>(
                                         <Button key={act.icon+act.text} onClick={(evt)=>{
                                             evt.preventDefault();
