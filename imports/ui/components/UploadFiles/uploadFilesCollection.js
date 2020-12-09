@@ -170,8 +170,10 @@ class UploadFile extends React.Component {
                     type: item['mime-type'],
                     identificador: item.name,
                     index: item.index,
+                    link,
                 };
             });
+            console.log('listaArquivos',listaArquivos)
         }
 
         this.setState({
@@ -354,7 +356,9 @@ class UploadFile extends React.Component {
                             </List.Content>
                             <List.Icon size='large' verticalAlign='middle'
                                        name="trash alternate"
-                                       onClick={() => {
+                                       onClick={(e) => {
+                                           e&&e.preventDefault&&e.preventDefault();
+                                           e&&e.stopPropagation&&e.stopPropagation();                                           
                                            return this.excluirArquivo(item.id);
                                        }}
                             />

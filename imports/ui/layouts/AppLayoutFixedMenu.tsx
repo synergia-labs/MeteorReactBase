@@ -30,7 +30,7 @@ const FixedMenuLayout = (props) => (
                 <AppNavBar {...props} />
             </Container>
         </Menu>
-        <div style={{ width:'100%',margin:0,marginTop: '5em',padding:4 }}>
+        <div style={{ width:'100%',display:'flex',flexDirection:'column',alignItems:'center',margin:0,marginTop: '5em',padding:4 }}>
             <AppRouterSwitch {...props} />
         </div>
     </Router>
