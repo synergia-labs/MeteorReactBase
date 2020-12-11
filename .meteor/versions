@@ -42,7 +42,6 @@ facebook-oauth@1.7.4
 fetch@0.1.1
 geojson-utils@1.0.10
 google-oauth@1.3.0
-hexsprite:postcss@2.1.0
 hot-code-push@1.0.4
 html-tools@1.0.11
 htmljs@1.0.11
