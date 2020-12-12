@@ -13,3 +13,113 @@ body {
   text-decoration: inherit;
   text-transform: none;
 }
+
+
+.ui.form .field {
+  position: relative;
+  width: 100%;
+}
+.ui.form .field:not(.checkbox) {
+  margin-top: 1rem;
+  margin-bottom: 1.7rem;
+}
+/* .ui.form .field label {
+  color: lightgrey;
+  position: absolute;
+  left: .7rem;
+  top: .7rem;
+  transition: .2s ease-in;
+} */
+.ui.form .field.select {
+  display: flex;
+}
+.ui.form .field.select:after {
+  align-self: center;
+  color: lightgrey;
+  content: "\f107";
+  font-family: "Icons";
+  margin-left: -1rem;
+}
+.ui.form .field.select select {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid lightgrey;
+  padding: .7rem 2rem .7rem .7rem;
+  position: relative;
+  border-radius: 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  transition: .2s ease-in;
+}
+.ui.form .field.select select:focus {
+  outline: none !important;
+  border-bottom: 2px solid dodgerblue !important;
+}
+.ui.form .field.select select:focus ~ label, .ui.form .field.select select:valid ~ label {
+  color: gray;
+  font-size: 80%;
+  top: -1rem;
+  left: 0;
+}
+.ui.form .field input:not([type=checkbox]),
+.ui.form .field textarea {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid lightgrey;
+  border-radius: 0;
+  padding: .7rem;
+  transition: .2s ease-in;
+}
+.ui.form .field input:not([type=checkbox])[value=" "],
+.ui.form .field textarea[value=" "] {
+  background: grey !important;
+}
+.ui.form .field input:not([type=checkbox]):focus ~ label, .ui.form .field input:not([type=checkbox]):valid ~ label,
+.ui.form .field textarea:focus ~ label,
+.ui.form .field textarea:valid ~ label {
+  color: grey;
+  font-size: 80%;
+  top: -1rem;
+  left: 0;
+}
+.ui.form .field input:not([type=checkbox]):focus,
+.ui.form .field textarea:focus {
+  border-bottom: 2px solid dodgerblue;
+  outline: none;
+}
+.ui.form .field.checkbox {
+  align-items: flex-start;
+  align-content: flex-start;
+  display: flex;
+  margin: .7rem 0;
+  position: relative;
+}
+.ui.form .field.checkbox input[type=checkbox] {
+  padding: .7rem;
+  border: 2px solid lightgrey;
+  transition: .2s ease-in;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+.ui.form .field.checkbox input[type=checkbox]:focus {
+  outline: none;
+}
+.ui.form .field.checkbox input[type=checkbox]:before {
+  color: grey;
+  content: "";
+  transition: .2s ease-in;
+}
+.ui.form .field.checkbox input[type=checkbox]:checked {
+  padding: .6rem .35rem;
+  margin: -.3rem .1rem 0 .7rem;
+  border-left: none;
+  border-top: none;
+  transform: rotate(45deg);
+}
+.ui.form .field.checkbox label {
+  font-size: initial;
+  position: static;
+  margin-left: 1rem;
+  align-self: center;
+}
+

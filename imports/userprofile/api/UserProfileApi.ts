@@ -283,6 +283,11 @@ class UserProfileApi extends ApiBase {
     if(!docObj._id||(user._id!==docObj._id&&user.roles.indexOf('Administrador')===-1)) {
       throw new Meteor.Error('Acesso negado', `Vocẽ não tem permissão para alterar esses dados`);
     }
+
+    if(user.roles.indexOf('Administrador')===-1) {  //prevent user change your self roles
+      delete docObj.roles;
+    }
+
     return super.beforeUpdate(docObj, context);
   }
 

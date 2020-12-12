@@ -189,7 +189,7 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
                     {(value||[]).map(subForm=>{
 
                         return (
-                            <div key={subForm.id} style={{border:'1px solid #DDD',margin:3,display:'flex',flexDirection:'row'}}>
+                            <div key={subForm.id} style={{margin:3,display:'flex',flexDirection:'row'}}>
                                 <SimpleForm
                                     isSubForm={true}
                                     ref={refForm=>formRefs[subForm.id]=refForm}
@@ -365,7 +365,7 @@ const SubFormComponent = ({reactElement,childrensElements,name,...props}:ISubFor
                     textTransform: 'none',
                 }}
             >{label}</label>):null}
-            <div style={{border:'1px solid #ddd',margin:3,marginLeft:10}}>
+            <div style={{margin:3,marginLeft:10}}>
                 <SimpleForm
                         isSubForm={true}
                         ref={fRef=>formRef=fRef}
