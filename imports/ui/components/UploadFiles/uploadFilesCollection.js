@@ -4,8 +4,6 @@ import Dropzone from 'react-dropzone';
 import _ from "lodash";
 import {attachmentsCollection} from '/imports/api/attachmentsCollection';
 import { Image, List, Icon} from 'semantic-ui-react'
-import Form from "semantic-ui-react/dist/commonjs/collections/Form";
-import Message from "semantic-ui-react/dist/commonjs/collections/Message";
 import Progress from "semantic-ui-react/dist/commonjs/modules/Progress";
 import {hasValue} from "/imports/libs/hasValue";
 
@@ -380,12 +378,22 @@ class UploadFile extends React.Component {
         );
     };
 
-    getConteudoDropzone = (getRootProps, getInputProps) => {
+    getConteudoDropzone = (getRootProps, getInputProps,  isDragActive, isDragReject) => {
         return (
-            <div {...getRootProps()}>
+            <div style={{
+                width: '100%',
+                padding:'2rem',
+                textAlign: 'center',
+                cursor: 'pointer',
+                backgroundColor: isDragReject? 'rgba(144,52,52,0.22)' :
+                    isDragActive ? 'rgba(69,144,52,0.22)' : undefined
+                }}
+                 {...getRootProps()}>
                 <input {...getInputProps()} />
                 <Icon name="cloud upload"/>
-                {'Clique aqui para adicionar uma arquivo'}
+
+                {isDragReject? 'Arquivo não permitido!' :
+                    isDragActive ? 'Arquivo permitido!' : 'Clique aqui para adicionar uma arquivo'}
             </div>
         );
     };
@@ -589,18 +597,21 @@ class UploadFile extends React.Component {
                                 accept={this.props.accept}
                                 ref={(fileInputRef => this['fileinput' + this.props.name + this.props.key] = fileInputRef)}
                             >
-                                {({getRootProps, getInputProps}) => (
+                                {({getRootProps, getInputProps, isDragActive, isDragReject}) => (
 
                                     <div style={{
                                         display: 'flex',
                                         justifyContent: 'center',
+                                        border:
+                                            isDragReject? '0.5px dashed  red' :
+                                                isDragActive ? '0.5px dashed green' : '0.5px dashed black',
                                         alignItems: 'center',
                                         flexWrap: 'wrap',
                                     }}>
                                         <div/>
                                         {this.state.inProgress
                                             ? this.getConteudoDropzoneEmUpload()
-                                            : this.getConteudoDropzone(getRootProps, getInputProps)}
+                                            : this.getConteudoDropzone(getRootProps, getInputProps,  isDragActive, isDragReject)}
                                     </div>
                                 )}
 
@@ -609,8 +620,8 @@ class UploadFile extends React.Component {
                         <div
                             col={12}
                             style={{
+                                padding:'0.5rem',
                                 borderRadius: 10,
-                                borderColor: '#2d5441',
                                 borderStyle: 'groove',
                                 boxShadow: 'rgba(0, 0, 0, 0.12) 0px 1px 6px, rgba(0, 0, 0, 0.12) 0px 1px 4px',
                             }}
