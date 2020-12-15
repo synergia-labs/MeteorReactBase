@@ -170,6 +170,7 @@ Meteor.startup(() => {
         return getHTMLEmailTemplate('Alteração da senha atual', email, footer);
     };
 
+
     Accounts.onLogin((params) => {
          console.log('OnLogin:',params&&params.user?{_id:params.user._id,username:params.user.username}:'-');
 
@@ -181,11 +182,35 @@ Meteor.startup(() => {
 
         if(userProfile) {
             userprofileApi.collectionInstance.update({_id:userProfile._id},{
-                $set:{lastacess:new Date()}
+                $set:{lastacess:new Date(),connected:true}
             })
         }
 
+        params.connection.onClose(Meteor.bindEnvironment(function()
+        {
+            if(userProfile) {
+                userprofileApi.collectionInstance.update({_id:userProfile._id},{
+                    $set:{lastacess:new Date(),connected:false}
+                })
+            }
+             // console.log('OnDesconect:',params.user._id); // called once the user disconnects
+        }, function(e){console.log('Error:',e)}))
+
     });
+
+    Accounts.onLogout((params) => {
+        const userProfile = params.user
+            ? userprofileApi.find({_id: params.user._id}).fetch()[0]
+            : undefined;
+
+        if(userProfile) {
+            userprofileApi.collectionInstance.update({_id:userProfile._id},{
+                $set:{lastacess:new Date(),connected:false}
+            })
+        }
+        // console.log('Logoff',!!userProfile?userProfile._id:'noUser')
+
+    })
 
     Accounts.config({
         sendVerificationEmail: true,
