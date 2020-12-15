@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
-import {Button, Container, Form} from 'semantic-ui-react'
+import {Button, Form} from 'semantic-ui-react'
 import {hasValue, isBoolean} from "../../../libs/hasValue";
-import _ from 'lodash';
+import _ from "lodash";
 import {Message,Icon } from 'semantic-ui-react'
-import {groupApi} from "/imports/modules/group/api/groupApi";
 import shortid from 'shortid';
 import { ReactSortable } from "react-sortablejs";
 
@@ -601,8 +600,7 @@ class SimpleForm extends Component<ISimpleFormProps> {
     }
 
     validate = () => {
-        const self = this;
-        const fielsWithError = [];
+        const fielsWithError:any = [];
 
         if(this.props.schema) {
             Object.keys(this.fields).forEach(field=>{
@@ -648,6 +646,10 @@ class SimpleForm extends Component<ISimpleFormProps> {
             this.docValue = {...this.docValue,...(this.props.doc||{})};
             this.setState({formElements:this.initFormElements(update)});
             this.setState({mode:this.props.mode});
+        }
+
+        if((this.props.mode!==prevProps.mode)&&!!this.state.error) {
+                this.setState({error:null});
         }
 
     }

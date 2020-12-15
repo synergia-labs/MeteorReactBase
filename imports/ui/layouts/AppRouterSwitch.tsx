@@ -2,8 +2,8 @@ import React from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom'
 
 import Modules from '../../modules';
-import AppNavBar from './AppNavBar'
 import NotFound from '../pages/NotFound/NotFound'
+import {getUser} from "/imports/libs/getUser";
 
 
 
@@ -52,7 +52,7 @@ const ProtectedRoute = ({ component: Component,generalProps, ...rest }) => (
         render={(props) => {
             const isLogged = Meteor.userId() !== null
             return isLogged ? (
-                <Component {...props} {...generalProps} />
+                <Component {...props} {...generalProps} getUser={getUser} />
             ) : (
                 <Redirect
                     to={{

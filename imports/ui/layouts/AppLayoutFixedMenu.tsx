@@ -1,19 +1,12 @@
 import React from 'react'
 import {
     Container,
-    Divider,
-    Dropdown,
-    Grid,
-    Header,
     Image,
-    List,
     Menu,
-    Segment,
 } from 'semantic-ui-react'
 import { BrowserRouter as Router,withRouter, NavLink } from 'react-router-dom'
 import AppNavBar from "./AppNavBar";
 import AppRouterSwitch from "./AppRouterSwitch";
-import {isMobile} from '../../libs/deviceVerify'
 
 const HomeIconButton = withRouter((props)=>{
     return <NavLink to={'/'}><div style={{
@@ -30,7 +23,10 @@ const FixedMenuLayout = (props) => (
                 <AppNavBar {...props} />
             </Container>
         </Menu>
-        <div style={{ width:'100%',display:'flex',flexDirection:'column',alignItems:'center',margin:0,marginTop: '5em',padding:4 }}>
+        <div style={{
+            display:'flex',flexDirection:'column',alignItems:'center',
+            overflowY:'auto',
+            width:'100%',height:'calc(100% - 47px)',margin:0,marginTop: 47,padding:4 }}>
             <AppRouterSwitch {...props} />
         </div>
     </Router>
