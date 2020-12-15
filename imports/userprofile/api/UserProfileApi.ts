@@ -103,11 +103,6 @@ class UserProfileApi extends ApiBase {
           email: userprofile.email,
         });
       }
-      if (userprofile.roles) {
-        Roles.addUsersToRoles(userprofile._id, userprofile.roles);
-      } else {
-        Roles.addUsersToRoles(userprofile._id, 'Usuario');
-      }
     }
   };
 
@@ -126,6 +121,7 @@ class UserProfileApi extends ApiBase {
       if (this.beforeInsert(dataObj, context)) {
 
         this.registrarUserProfileNoMeteor(dataObj);
+        const password = dataObj.password;
         delete dataObj.password;
         if (!dataObj.roles) {
           dataObj.roles = [ 'Usuario' ];
@@ -165,6 +161,8 @@ class UserProfileApi extends ApiBase {
             $addToSet: { otheraccounts: { _id: dataObj._id, service: settings.service } },
           });
         }
+
+        dataObj.password = password;
 
         this.afterInsert(dataObj, context);
         if (context.rest) {
@@ -210,7 +208,9 @@ class UserProfileApi extends ApiBase {
     if (Meteor.isServer) {
       Meteor.publish('statusCadastroUserProfile', userId => {
         check(userId, String);
-        if (Roles.userIsInRole(userId, 'Administrador')) {
+        const user = getUser();
+
+        if (user.roles.indexOf('Administrador')!==-1) {
           return Meteor.users.find(
             {},
             {
@@ -292,7 +292,7 @@ class UserProfileApi extends ApiBase {
   }
 
   afterUpdate(doc) {
-    doc && doc.roles && Roles.setUserRoles(doc._id, doc.roles);
+
   }
 
   beforeRemove(docObj, context) {

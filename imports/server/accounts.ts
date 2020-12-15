@@ -44,7 +44,6 @@ function validateSocialLoginAndUpdateProfile(userProfile, user, serviceName) {
         user.createdat = new Date();
         user.lastupdate = new Date();
         const userProfileID = userprofileApi.collectionInstance.insert(user);
-        Roles.addUsersToRoles(user._id, 'Usuario');
         delete user.otheraccounts;
         Meteor.users.update({_id: user._id}, {
             $set: user,

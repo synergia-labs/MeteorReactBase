@@ -4,6 +4,7 @@ import Signin from "../pages/SingIn/Signin";
 import Signup from "../pages/SingUp/Signup";
 import Signout from "../pages/SingOut/Signout";
 import EnrollAccount from "../pages/EnrollAccount/EnrollAccount";
+import EmailVerify from "../pages/EmailVerify/EmailVerify";
 import RecoveryPassword from "/imports/ui/pages/RecoveryPassword/RecoveryPassword";
 import ResetPassword from "/imports/ui/pages/ResetPassword/ResetPassword";
 
@@ -40,5 +41,9 @@ export const pagesRouterList = [
   {
     path: '/enroll-account/:token',
     component: EnrollAccount,
+  },
+  {
+    path: '/verify-email/:token',
+    component: EmailVerify,
   },
 ];

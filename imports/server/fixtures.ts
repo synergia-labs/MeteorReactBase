@@ -17,7 +17,6 @@ function createDefautUser() {
             email: 'admin@mrb.com',
             password: 'admin@mrb.com',
         });
-        Roles.addUsersToRoles(createdUserId, ['Administrador']);
         Meteor.users.update(
             {_id: createdUserId},
             {
@@ -45,8 +44,6 @@ function createDefautUser() {
 // if the database is empty on server start, create some sample data.
 Meteor.startup(() => {
     console.log('fixtures Meteor.startup');
-    Roles.createRole('Usuario', {unlessExists: true});
-    Roles.createRole('Administrador', {unlessExists: true});
     // Add default admin account
     createDefautUser();
 });

@@ -248,37 +248,6 @@ const registerGoogleMobileLoginHandler = () => {
     });
 };
 
-//
-//     const user = { ...facebookUser };
-//
-//     user.username = identity.serviceData.name;
-//     user.emails = [{ address: identity.serviceData.email }];
-//     user.email = identity.serviceData.email;
-//     user._id = user.userId;
-//     user.roles = ['Usuario'];
-//
-//
-//     userprofileApi.includeAuditData(user, 'insert', 'facebook');
-//
-//     const userProfile = userprofileApi.findOne({ email: user.email });
-//
-//     if (!userProfile) {
-//       userprofileApi.collectionInstance.insert(user);
-//       Roles.addUsersToRoles(user._id, 'Usuario');
-//       Meteor.users.upsert({ _id: user._id }, {
-//         $set: user,
-//       });
-//     } else {
-//       user.photo = userProfile.photo;
-//       user.username = userProfile.username;
-//       user.language = userProfile.language;
-//       user.roles = userProfile.roles;
-//     }
-//
-//     console.log('newUser', user);
-//     return facebookUser;
-//   });
-// };
 
 const init = () => {
     if (!settings||!settings.settingsGoogle) return;

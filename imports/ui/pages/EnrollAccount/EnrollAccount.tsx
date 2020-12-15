@@ -1,5 +1,4 @@
 import React from 'react'
-import { Meteor } from 'meteor/meteor'
 import {Grid, Header, Image, Message} from 'semantic-ui-react'
 
 let emailVerified = false;
@@ -12,7 +11,7 @@ const EnrollAccount = (props) => {
 
             console.log(err,'<>',res)
             if (err) {
-                if(err.reason==='"Verify email link expired"') {
+                if(err.reason==='Verify email link expired') {
                     setStatus('Problema na verificação do Email: Token expirado, solicite uma nova senha!');
                 } else {
                     setStatus('Problema na verificação do Email: Token Inválido, tente novamente');
