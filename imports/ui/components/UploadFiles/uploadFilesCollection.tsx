@@ -3,9 +3,10 @@ import React from 'react';
 import Dropzone from 'react-dropzone';
 import _ from "lodash";
 import {attachmentsCollection} from '/imports/api/attachmentsCollection';
-import { Image, List, Icon} from 'semantic-ui-react'
+import { List, Icon} from 'semantic-ui-react'
 import Progress from "semantic-ui-react/dist/commonjs/modules/Progress";
 import {hasValue} from "/imports/libs/hasValue";
+import { Meteor } from 'meteor/meteor';
 
 const {grey100, grey500, grey700} = ['#eeeeee','#c9c9c9','#a1a1a1'];
 
@@ -59,14 +60,56 @@ const styles = {
     },
 };
 
-const getFileSize = (size) => {
+const getFileSize = (size:number) => {
     return ((size / 1024 < 1000) ? `${(size / 1024).toFixed(2)}KB` : `${(size /
         (1024 * 1024)).toFixed(2)}MB`);
 };
 
-class UploadFile extends React.Component {
-    constructor(props) {
-        super(props);
+
+interface IArquivo {
+    name: string;
+    type?:string;
+    size: number;
+    link: string;
+    _id?: string;
+    id:string;
+    ext?: string;
+    queue?: boolean;
+    file?:object;
+    index?: number;
+    'mime-type'?: string;
+    status?: string;
+}
+
+
+interface IUploadFileProps {
+    loading: boolean,
+    attachments: IArquivo[] | [],
+    attachmentsExists:boolean,
+}
+
+interface IUploadFileState {
+    files:[];
+    arquivosBase64: [];
+    links: Partial<IArquivo>[] | [];
+    linksServidor: [];
+    tabelaArquivos: null | [];
+    isEmUpload: boolean;
+    arquivos: IArquivo[] | [];
+    inProgress?:boolean;
+    progress?:number;
+    msgError?:string | null;
+    uploading?: [];
+    uploadFileSize?:string;
+    uploadFileMimeType?:string
+}
+
+class UploadFile extends React.Component<IUploadFileProps & IUploadFilesCollection,IUploadFileState> {
+    fileQueue:IArquivo[] | [];
+    arquivosServ:[];
+
+    constructor(props: IUploadFileProps & IUploadFilesCollection) {
+        super(props)
         this.fileQueue = [];
         this.arquivosServ = this.props.value || [];
         this.state = {
@@ -80,7 +123,7 @@ class UploadFile extends React.Component {
         };
     }
 
-    static getDerivedStateFromProps(nextProps, prevState) {
+    static getDerivedStateFromProps(nextProps:IUploadFileProps) {
         const arquivos = nextProps.attachments || [];
 
         return {
@@ -89,12 +132,12 @@ class UploadFile extends React.Component {
         };
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
+    componentDidUpdate(prevProps:IUploadFileProps, prevState:IUploadFileState, snapshot) {
 
         const arquivos = this.props.attachments || [];
 
         if (!_.isEqual(this.props.attachments, prevProps.attachments)||this.props.attachments.length>0&&this.state.links.length===0) {
-            this.fileQueue.forEach((arquivo, index) => {
+            this.fileQueue.forEach((arquivo) => {
                 arquivos.push(arquivo);
             });
             this.mostrarLinksArquivos(arquivos);
@@ -104,7 +147,7 @@ class UploadFile extends React.Component {
         return null;
     }
 
-    onChange = value => {
+    onChange = (value:any) => {
         const event = {
             target: {
                 value,
@@ -117,7 +160,7 @@ class UploadFile extends React.Component {
         this.props.onChange(event);
     };
 
-    getIcon = (mimeType) => {
+    getIcon = (mimeType: string | null) => {
         if (!mimeType) {
             return '-';
         }
@@ -151,10 +194,10 @@ class UploadFile extends React.Component {
         }
     };
 
-    mostrarLinksArquivos = (arquivos) => {
+    mostrarLinksArquivos = (arquivos:IArquivo[]) => {
         //const { arquivos, progress } = this.state || [];
 
-        let listaArquivos = [];
+        let listaArquivos:[] | Partial<IArquivo>[] = [];
         if (arquivos.length > 0) {
             listaArquivos = arquivos.map(item => {
                 const link = item.status && item.status === 'InProgress'
@@ -186,14 +229,14 @@ class UploadFile extends React.Component {
      * @param rejectedFiles - array com arquivos recusados pelos parametros do component Dropzone
      */
         // TODO limitar a n arquivos, parametrizado, no componente UploadPhotoComponent
-    onDrop = (acceptedFiles, rejectedFiles) => {
+    onDrop = (acceptedFiles: {name:string,preview:string,size:number }[], rejectedFiles:[]) => {
         if (rejectedFiles.length === 0) {
             const arquivos = this.state.arquivos;
             const self = this;
-            let firstFile = null;
+            let firstFile: Partial<IArquivo> | null = null;
 
-            acceptedFiles.forEach((file, index) => {
-                const arquivo = {
+            acceptedFiles.forEach((file, index:number) => {
+                const arquivo:Partial<IArquivo> = {
                     name: file.name.split('.')[0],
                     ext: file.name.split('.')[1],
                     link: file.preview,
@@ -235,8 +278,8 @@ class UploadFile extends React.Component {
         }
     };
 
-    downloadURI = (uri, name) => {
-        var link = document.createElement('a');
+    downloadURI = (uri:string, name:string) => {
+        let link = document.createElement('a');
         link.download = name;
         link.href = uri;
         link.click();
@@ -245,7 +288,7 @@ class UploadFile extends React.Component {
     getListReadOnly = () => {
         return (this.state.links.length > 0
             ? <List divided relaxed>
-                {this.state.links.map(item => {
+                {this.state.links.map((item:IArquivo) => {
                     const filetype = item.type ? item.type.split('/')[0] : null;
 
                     return (
@@ -264,7 +307,7 @@ class UploadFile extends React.Component {
                                 {filetype ? (item.status && item.status === 'InProgress' ? (
                                     this.getIcon(this.state.uploadFileMimeType || null)
                                 ) : (
-                                    this.getIcon(item.type)
+                                    this.getIcon(item.type || null)
                                 )) : (
                                     <Icon name="cloud upload"/>
                                 )}
@@ -311,7 +354,7 @@ class UploadFile extends React.Component {
     getList = () => {
         return (this.state.links.length > 0
             ? <List divided relaxed>
-                {this.state.links.map(item => {
+                {this.state.links.map((item:IArquivo) => {
                     const filetype = item.type ? item.type.split('/')[0] : null;
 
                     return (
@@ -330,7 +373,7 @@ class UploadFile extends React.Component {
                                 {filetype ? (item.status && item.status === 'InProgress' ? (
                                     this.getIcon(this.state.uploadFileMimeType || null)
                                 ) : (
-                                    this.getIcon(item.type)
+                                    this.getIcon(item.type || null)
                                 )) : (
                                     <Icon name="cloud upload"/>
                                 )}
@@ -354,10 +397,10 @@ class UploadFile extends React.Component {
                             </List.Content>
                             <List.Icon size='large' verticalAlign='middle'
                                        name="trash alternate"
-                                       onClick={(e) => {
+                                       onClick={(e:React.SyntheticEvent) => {
                                            e&&e.preventDefault&&e.preventDefault();
                                            e&&e.stopPropagation&&e.stopPropagation();                                           
-                                           return this.excluirArquivo(item.id);
+                                           return item.id ? this.excluirArquivo(item.id): false;
                                        }}
                             />
                         </List.Item>
@@ -378,7 +421,7 @@ class UploadFile extends React.Component {
         );
     };
 
-    getConteudoDropzone = (getRootProps, getInputProps,  isDragActive, isDragReject) => {
+    getConteudoDropzone = (getRootProps:any, getInputProps:any,  isDragActive:boolean, isDragReject:boolean) => {
         return (
             <div style={{
                 width: '100%',
@@ -398,9 +441,9 @@ class UploadFile extends React.Component {
         );
     };
 
-    excluirArquivo = id => {
+    excluirArquivo = (id:string) => {
         const self = this;
-        Meteor.call('RemoveFile', id, (err, res) => {
+        Meteor.call('RemoveFile', id, (err:boolean) => {
             if (err) {
                 console.log(err);
             } else {
@@ -415,7 +458,7 @@ class UploadFile extends React.Component {
         });
     };
 
-    uploadIt = (e, fileUpload) => {
+    uploadIt = (e: any, fileUpload: Partial<IArquivo> | null) => {
         let file;
         const self = this;
 
@@ -459,21 +502,25 @@ class UploadFile extends React.Component {
                  // console.log('Starting');
             });
 
-            uploadInstance.on('end', (error, fileObj) => {
+            uploadInstance.on('end', () => {
                  // console.log('End');
                 self.setState({
                     progress: 0,
                 });
             });
 
-            uploadInstance.on('uploaded', (error, fileObj) => {
+            uploadInstance.on('uploaded', (error:string|null, fileObj:any):void => {
+
+                if(error){
+                    console.log(error)
+                }
 
                 const attachs = [];
                 let hasInsertedOjb = false;
                 attachmentsCollection.attachments.find({
                     'meta.docId': self.props.doc._id,
                     'meta.fieldName': self.props.name,
-                }).fetch().forEach(file => {
+                }).fetch().forEach((file:any) => {
                     attachs.push({
                         name: file.name,
                         size: file.size,
@@ -518,7 +565,7 @@ class UploadFile extends React.Component {
                     // console.log('attachs',attachs)
                     self.onChange(attachs);
                     // Remove the filename from the upload box
-                    const refsName = 'fileinput' + this.props.name + this.props.key;
+                    const refsName:string = 'fileinput' + this.props.name + this.props.key;
 
                     if (this[refsName]) {
                         this[refsName].value = '';
@@ -541,11 +588,11 @@ class UploadFile extends React.Component {
                 }
             });
 
-            uploadInstance.on('error', (error, fileObj) => {
+            uploadInstance.on('error', (error:string) => {
                 console.log(`Error during upload: ${error}`);
             });
 
-            uploadInstance.on('progress', (progress, fileObj) => {
+            uploadInstance.on('progress', (progress:number, fileObj:IArquivo) => {
                 const uploadSize = (Number(progress) / 100) * fileObj.size;
                 // Update our progress bar
                 self.setState({
@@ -648,14 +695,39 @@ UploadFile.defaultProps = {
         arquivosRejeitados: 'Allowed file types: xlsx, .xlsx, .xls, image/*, .doc, .docx, .ppt, .pptx, .txt, .pdf, .sql, .csv,.zip,.rar,.gz,.mp4',
         tabelaVazia:'Tabela vazia',
     },
-    onChange: (...x) => {
+    onChange: () => {
 
     },
     typeConteudo: '',
     value: [],
 };
 
-const UploadFilesCollection = withTracker(props => {
+interface IUploadFilesCollection {
+    preventDropOnDocument: boolean;
+    name:string;
+    error:boolean;
+    disableClick: boolean;
+    multiple: boolean;
+    minSize: number;
+    maxSize: number;
+    accept: string;
+    mensagens: {
+        label:string,
+        arquivosRejeitados:string,
+        tabelaVazia:string,
+    };
+    onChange: (x:any) => any;
+    saveOnChange: (doc:object) => void;
+    typeConteudo: string;
+    value: [];
+    doc?:{_id: number};
+    label?:string;
+    readOnly?:boolean;
+    activeStyle:object;
+    activeClassName:string;
+}
+
+const UploadFilesCollection = withTracker((props:IUploadFilesCollection) => {
     const doc = typeof props.doc === 'function' ? props.doc() : props.doc;
     const handleAttachments = Meteor.subscribe('files-attachments', {
         'meta.docId': doc ? doc._id : 'No-ID',
