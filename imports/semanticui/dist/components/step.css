@@ -369,7 +369,7 @@
   background: #F0F0F0;
 }
 .ui.steps .step.active .title {
-  color: #009FDA;
+  color: #67ae0a;
 }
 .ui.ordered.steps .step.active:before,
 .ui.steps .active.step i.icon {
