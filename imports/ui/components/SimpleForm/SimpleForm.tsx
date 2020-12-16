@@ -537,7 +537,7 @@ class SimpleForm extends Component<ISimpleFormProps> {
             return element;
         }
         self.fields[element.props.name]={type:element.type.name,};
-        if(element.type.name==='FormGroup'&&element.props.formType==='subform'&&!!element.props.name) {
+        if(element.props.formType==='subform'&&!!element.props.name) {
             return <SubFormComponent
                 name={element.props.name}
                 childrensElements={element.props.children}
@@ -550,7 +550,7 @@ class SimpleForm extends Component<ISimpleFormProps> {
                 setFieldMethods={(methods)=>self.fields[element.props.name]={...self.fields[element.props.name],...methods}}
             />
 
-        } else if(element.type.name==='FormGroup'&&element.props.formType==='subformArray'&&!!element.props.name) {
+        } else if(element.props.formType==='subformArray'&&!!element.props.name) {
             return <SubFormArrayComponent
                 name={element.props.name}
                 childrensElements={element.props.children}
