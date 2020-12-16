@@ -31,3 +31,4 @@ reactive-dict
 meteorhacks:ssr
 ostrio:files
 ostrio:meteor-root
+force-ssl
