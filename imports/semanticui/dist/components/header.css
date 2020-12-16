@@ -348,22 +348,22 @@ h6.ui.header .sub.header {
 --------------------*/
 
 .ui.primary.header {
-  color: #2196F3;
+  color: #67ae0a;
 }
 a.ui.primary.header:hover {
-  color: #028bf9;
+  color: #5a9d02;
 }
 .ui.primary.dividing.header {
-  border-bottom: 2px solid #2196F3;
+  border-bottom: 2px solid #67ae0a;
 }
 .ui.inverted.primary.header.header.header {
-  color: #2979FF;
+  color: #00E676;
 }
 a.ui.inverted.primary.header.header.header:hover {
-  color: #005cf5;
+  color: #00b35c;
 }
 .ui.inverted.primary.dividing.header {
-  border-bottom: 2px solid #2979FF;
+  border-bottom: 2px solid #00E676;
 }
 .ui.secondary.header {
   color: #9E9E9E;

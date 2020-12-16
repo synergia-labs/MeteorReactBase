@@ -53,7 +53,7 @@ body {
 }
 .ui.form .field.select select:focus {
   outline: none !important;
-  border-bottom: 2px solid dodgerblue !important;
+  border-bottom: 2px solid #67ae0a !important;
 }
 .ui.form .field.select select:focus ~ label, .ui.form .field.select select:valid ~ label {
   color: gray;
@@ -84,7 +84,7 @@ body {
 }
 .ui.form .field input:not([type=checkbox]):focus,
 .ui.form .field textarea:focus {
-  border-bottom: 2px solid dodgerblue;
+  border-bottom: 2px solid #67ae0a;
   outline: none;
 }
 .ui.form .field.checkbox {

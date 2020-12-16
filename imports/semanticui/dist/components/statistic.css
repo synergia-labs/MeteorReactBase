@@ -330,12 +330,12 @@
 .ui.primary.statistics .statistic > .value,
 .ui.statistics .primary.statistic > .value,
 .ui.primary.statistic > .value {
-  color: #2196F3;
+  color: #67ae0a;
 }
 .ui.inverted.primary.statistics .statistic > .value,
 .ui.statistics .inverted.primary.statistic > .value,
 .ui.inverted.primary.statistic > .value {
-  color: #2979FF;
+  color: #00E676;
 }
 .ui.secondary.statistics .statistic > .value,
 .ui.statistics .secondary.statistic > .value,

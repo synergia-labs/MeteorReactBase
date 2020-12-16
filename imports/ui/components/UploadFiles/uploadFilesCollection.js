@@ -171,7 +171,6 @@ class UploadFile extends React.Component {
                     link,
                 };
             });
-            console.log('listaArquivos',listaArquivos)
         }
 
         this.setState({

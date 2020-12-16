@@ -610,7 +610,7 @@ a.ui.active.label:hover:before {
 a.ui.basic.label:hover {
   text-decoration: none;
   background: none #FFFFFF;
-  color: #00b2f3;
+  color: #75c60b;
   -webkit-box-shadow: none;
           box-shadow: none;
 }
@@ -655,7 +655,7 @@ a.ui.basic.label:hover {
   background: #1B1C1D;
 }
 .ui.inverted.basic.label:hover {
-  color: #009FDA;
+  color: #67ae0a;
 }
 
 /*-------------------
@@ -664,77 +664,77 @@ a.ui.basic.label:hover {
 
 .ui.primary.labels .label,
 .ui.ui.ui.primary.label {
-  background-color: #2196F3;
-  border-color: #2196F3;
+  background-color: #67ae0a;
+  border-color: #67ae0a;
   color: rgba(255, 255, 255, 0.9);
 }
 
 /* Link */
 .ui.primary.labels a.label:hover,
 a.ui.ui.ui.primary.label:hover {
-  background-color: #028bf9;
-  border-color: #028bf9;
+  background-color: #5a9d02;
+  border-color: #5a9d02;
   color: #FFFFFF;
 }
 
 /* Ribbon */
 .ui.ui.ui.primary.ribbon.label {
-  border-color: #0c7cd5;
+  border-color: #4a7e07;
 }
 
 /* Basic */
 .ui.basic.labels .primary.label,
 .ui.ui.ui.basic.primary.label {
   background: none #FFFFFF;
-  border-color: #2196F3;
-  color: #2196F3;
+  border-color: #67ae0a;
+  color: #67ae0a;
 }
 .ui.basic.labels a.primary.label:hover,
 a.ui.ui.ui.basic.primary.label:hover {
   background: none #FFFFFF;
-  border-color: #028bf9;
-  color: #028bf9;
+  border-color: #5a9d02;
+  color: #5a9d02;
 }
 
 /* Inverted */
 .ui.inverted.labels .primary.label,
 .ui.ui.ui.inverted.primary.label {
-  background-color: #2979FF;
-  border-color: #2979FF;
+  background-color: #00E676;
+  border-color: #00E676;
   color: #1B1C1D;
 }
 
 /* Inverted Link */
 .ui.inverted.labels a.primary.label:hover,
 a.ui.ui.ui.inverted.primary.label:hover {
-  background-color: #005cf5;
-  border-color: #005cf5;
+  background-color: #00b35c;
+  border-color: #00b35c;
   color: #1B1C1D;
 }
 
 /* Inverted Ribbon */
 .ui.ui.ui.inverted.primary.ribbon.label {
-  border-color: #005cf5;
+  border-color: #00b35c;
 }
 
 /* Inverted Basic */
 .ui.inverted.basic.labels .primary.label,
 .ui.ui.ui.inverted.basic.primary.label {
   background-color: #1B1C1D;
-  border-color: #2979FF;
-  color: #2979FF;
+  border-color: #00E676;
+  color: #00E676;
 }
 .ui.inverted.basic.labels a.primary.label:hover,
 a.ui.ui.ui.inverted.basic.primary.label:hover {
-  border-color: #005cf5;
+  border-color: #00b35c;
   background-color: #1B1C1D;
-  color: #005cf5;
+  color: #00b35c;
 }
 
 /* Inverted Basic Tags */
 .ui.inverted.basic.tag.labels .primary.label,
 .ui.ui.ui.inverted.primary.basic.tag.label {
-  border: 1px solid #2979FF;
+  border: 1px solid #00E676;
 }
 .ui.inverted.basic.tag.labels .primary.label:before,
 .ui.ui.ui.inverted.primary.basic.tag.label:before {

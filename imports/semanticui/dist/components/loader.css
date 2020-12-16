@@ -292,7 +292,7 @@
 .ui.primary.loading.loading.loading.loading .input > i.icon:after,
 .ui.primary.loading.loading.loading.loading > i.icon:after,
 .ui.primary.loader.loader.loader:after {
-  color: #2196F3;
+  color: #67ae0a;
 }
 .ui.inverted.primary.elastic.loader:before,
 .ui.inverted.primary.elastic.loading.loading.loading:not(.segment):before,
@@ -302,7 +302,7 @@
 .ui.inverted.primary.loading.loading.loading.loading .input > i.icon:after,
 .ui.inverted.primary.loading.loading.loading.loading > i.icon:after,
 .ui.inverted.primary.loader.loader.loader:after {
-  color: #2979FF;
+  color: #00E676;
 }
 .ui.secondary.elastic.loader.loader:before,
 .ui.secondary.basic.elastic.loading.button:before,

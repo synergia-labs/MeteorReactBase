@@ -308,7 +308,7 @@
 }
 .ui.cards > .card > .content > a.header:hover,
 .ui.card > .content > a.header:hover {
-  color: #00b2f3;
+  color: #75c60b;
 }
 
 /* Meta */
@@ -427,7 +427,7 @@
 }
 .ui.cards > .card > .extra a:not(.ui):hover,
 .ui.card > .extra a:not(.ui):hover {
-  color: #00b2f3;
+  color: #75c60b;
 }
 
 
@@ -562,26 +562,26 @@ a.ui.card:hover,
 .ui.primary.cards > .card,
 .ui.cards > .primary.card,
 .ui.primary.card {
-  -webkit-box-shadow: 0 0 0 1px #D4D4D5, 0 2px 0 0 #2196F3, 0 1px 3px 0 #D4D4D5;
-          box-shadow: 0 0 0 1px #D4D4D5, 0 2px 0 0 #2196F3, 0 1px 3px 0 #D4D4D5;
+  -webkit-box-shadow: 0 0 0 1px #D4D4D5, 0 2px 0 0 #67ae0a, 0 1px 3px 0 #D4D4D5;
+          box-shadow: 0 0 0 1px #D4D4D5, 0 2px 0 0 #67ae0a, 0 1px 3px 0 #D4D4D5;
 }
 .ui.primary.cards > .card:hover,
 .ui.cards > .primary.card:hover,
 .ui.primary.card:hover {
-  -webkit-box-shadow: 0 0 0 1px #D4D4D5, 0 2px 0 0 #028bf9, 0 1px 3px 0 #BCBDBD;
-          box-shadow: 0 0 0 1px #D4D4D5, 0 2px 0 0 #028bf9, 0 1px 3px 0 #BCBDBD;
+  -webkit-box-shadow: 0 0 0 1px #D4D4D5, 0 2px 0 0 #5a9d02, 0 1px 3px 0 #BCBDBD;
+          box-shadow: 0 0 0 1px #D4D4D5, 0 2px 0 0 #5a9d02, 0 1px 3px 0 #BCBDBD;
 }
 .ui.inverted.primary.cards > .card,
 .ui.inverted.cards > .primary.card,
 .ui.inverted.primary.card {
-  -webkit-box-shadow: 0 1px 3px 0 #555555, 0 2px 0 0 #2979FF, 0 0 0 1px #555555;
-          box-shadow: 0 1px 3px 0 #555555, 0 2px 0 0 #2979FF, 0 0 0 1px #555555;
+  -webkit-box-shadow: 0 1px 3px 0 #555555, 0 2px 0 0 #00E676, 0 0 0 1px #555555;
+          box-shadow: 0 1px 3px 0 #555555, 0 2px 0 0 #00E676, 0 0 0 1px #555555;
 }
 .ui.inverted.primary.cards > .card:hover,
 .ui.inverted.cards > .primary.card:hover,
 .ui.inverted.primary.card:hover {
-  -webkit-box-shadow: 0 1px 3px 0 #555555, 0 2px 0 0 #005cf5, 0 0 0 1px #555555;
-          box-shadow: 0 1px 3px 0 #555555, 0 2px 0 0 #005cf5, 0 0 0 1px #555555;
+  -webkit-box-shadow: 0 1px 3px 0 #555555, 0 2px 0 0 #00b35c, 0 0 0 1px #555555;
+          box-shadow: 0 1px 3px 0 #555555, 0 2px 0 0 #00b35c, 0 0 0 1px #555555;
 }
 .ui.secondary.cards > .card,
 .ui.cards > .secondary.card,
@@ -1294,7 +1294,7 @@ a.ui.card:hover,
 }
 .ui.inverted.cards > .card > .extra a:not(.ui):hover,
 .ui.inverted.card > .extra a:not(.ui):hover {
-  color: #00b2f3;
+  color: #75c60b;
 }
 
 /* Link card(s) */

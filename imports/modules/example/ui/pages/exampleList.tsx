@@ -25,7 +25,6 @@ interface IExampleList {
 const ExampleList = ({examples,history,remove,showDialog,onSearch,total,loading,setPage,setPageSize,searchBy,pageProperties}:IExampleList) => {
 
     const onClick = (event,id,doc,showDialog) => {
-        console.log(history)
         history.push('/example/view/'+id);
     }
 

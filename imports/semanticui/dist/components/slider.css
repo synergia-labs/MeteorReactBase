@@ -263,28 +263,28 @@
 
 /* Standard */
 .ui.primary.slider .inner .track-fill {
-  background-color: #2196F3;
+  background-color: #67ae0a;
 }
 .ui.primary.inverted.slider .inner .track-fill {
-  background-color: #2979FF;
+  background-color: #00E676;
 }
 
 /* Basic */
 .ui.primary.slider.basic .inner .thumb {
-  background-color: #2196F3;
+  background-color: #67ae0a;
 }
 .ui.primary.slider.basic .inner .thumb:hover,
 .ui.primary.slider.basic:focus .inner .thumb {
-  background-color: #028bf9;
+  background-color: #5a9d02;
 }
 
 /* Basic Inverted */
 .ui.primary.inverted.slider.basic .inner .thumb {
-  background-color: #2979FF;
+  background-color: #00E676;
 }
 .ui.primary.inverted.slider.basic .inner .thumb:hover,
 .ui.primary.inverted.slider.basic:focus .inner .thumb {
-  background-color: #005cf5;
+  background-color: #00b35c;
 }
 
 /* Standard */

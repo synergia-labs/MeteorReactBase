@@ -107,7 +107,7 @@
        Links
 --------------------*/
 
-@linkColor           : #009FDA;
+@linkColor           : #67ae0a;
 @linkUnderline       : none;
 @linkHoverColor      : lighten(@linkColor, 5);
 @linkHoverUnderline  : @linkUnderline;
@@ -116,7 +116,7 @@
   Highlighted Text
 --------------------*/
 
-@highlightBackground : #009FDA;
+@highlightBackground : #67ae0a;
 @highlightColor      : @white;
 
 /*-------------------
