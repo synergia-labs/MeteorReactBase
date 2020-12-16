@@ -1,3 +1,4 @@
+// @ts-ignore
 import React from "react";
 import Home from "../pages/Home/Home";
 import Signin from "../pages/SingIn/Signin";
