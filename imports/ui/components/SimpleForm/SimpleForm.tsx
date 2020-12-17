@@ -23,14 +23,14 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
 
     const [error,setError] = React.useState(false)
     const [value,setValue] = React.useState(initialValue||[])
-    const [stringValue,setStringValue] = React.useState('')
+    //const [stringValue,setStringValue] = React.useState('')
     const [mode,setMode] = React.useState(props.mode||'edit')
     const [changeByUser,setChangeByUser] = React.useState(false)
 
     const formRefs = {};
 
     React.useEffect(() => {
-        if(!changeByUser&&(!value||value.length===0)&&(initialValue||[]).length>0) {
+        if(!changeByUser&&(!value||value.length===0 || !_.isEqual(value , initialValue))&&(initialValue||[]).length>0) {
             setValue(initialValue);
         }
         if(mode!==props.mode) {
@@ -124,21 +124,22 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
             return l;
         })
         setValue(list);
-        setStringValue(list.toString());
         onChange({target:{
                 value:list,
             }})
     }
 
     const addSubForm = () => {
-        const newValue = (value||[]);
+        const newValue = (value||[]).filter(subDoc=>subDoc.id);
 
         newValue.push({
-            id:shortid.generate();
+            id:shortid.generate()
         })
 
         setValue(newValue);
-        setStringValue(newValue.toString())
+        onChange({target:{
+                value:newValue,
+            }})
     }
 
     const onFormChangeHandle = formId => (doc) => {
@@ -156,15 +157,16 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
             }})
     }
     const onClickDelete = formId => doc =>{
-        const newDoc = (value||[]).filter(subDoc=>subDoc.id!==formId)
-
+        let newDoc = (value||[]).filter(subDoc=>subDoc.id!==formId)
+        if(newDoc.length === 0){
+            newDoc.push({})
+        }
         onChange({target:{
                 value:newDoc,
             }})
     }
 
     const label = reactElement.props.label||(props.fieldSchema?props.fieldSchema.label:undefined);
-
     return (
         <div style={{marginTop:5,width:'100%',backgroundColor:error?'#FFF6F6':undefined}}>
             {hasValue(label)?(<label
@@ -186,34 +188,36 @@ const SubFormArrayComponent = ({reactElement,childrensElements,name,initialValue
                     handle={'.dragButton'}
                 >
                     {(value||[]).map(subForm=>{
+                        if(subForm && subForm.id){
+                            return (
+                                <div key={subForm.id} style={{margin:3,display:'flex',flexDirection:'row'}}>
+                                    <SimpleForm
+                                        isSubForm={true}
+                                        ref={refForm=>formRefs[subForm.id]=refForm}
+                                        key={subForm.id}
+                                        mode={mode}
+                                        schema={props.fieldSchema&&props.fieldSchema.subSchema?props.fieldSchema.subSchema:undefined}
+                                        doc={subForm}
+                                        onFormChange={onFormChangeHandle(subForm.id)}
+                                    >
+                                        {childrensElements}
+                                    </SimpleForm>
+                                    {mode!=='view'?(
+                                        <div style={{display:'flex',flexDirection:'column',justifyContent:'center'}}>
+                                            <Button type="button" icon={'trash'} onClick={onClickDelete(subForm.id)} />
+                                        </div>
+                                    ):null}
+                                    {mode!=='view'?(
+                                        <div style={{display:'flex',flexDirection:'column',justifyContent:'center'}}>
+                                            <Button type="button" className={'dragButton'} icon={'th'} />
+                                        </div>
+                                    ):null}
 
-                        return (
-                            <div key={subForm.id} style={{margin:3,display:'flex',flexDirection:'row'}}>
-                                <SimpleForm
-                                    isSubForm={true}
-                                    ref={refForm=>formRefs[subForm.id]=refForm}
-                                    key={subForm.id}
-                                    mode={mode}
-                                    schema={props.fieldSchema&&props.fieldSchema.subSchema?props.fieldSchema.subSchema:undefined}
-                                    doc={subForm}
-                                    onFormChange={onFormChangeHandle(subForm.id)}
-                                >
-                                    {childrensElements}
-                                </SimpleForm>
-                                {mode!=='view'?(
-                                    <div style={{display:'flex',flexDirection:'column',justifyContent:'center'}}>
-                                        <Button type="button" icon={'trash'} onClick={onClickDelete(subForm.id)} />
-                                    </div>
-                                ):null}
-                                {mode!=='view'?(
-                                <div style={{display:'flex',flexDirection:'column',justifyContent:'center'}}>
-                                    <Button type="button" className={'dragButton'} icon={'th'} />
                                 </div>
-                                ):null}
-
-                            </div>
-                        )
-
+                            )
+                        }else{
+                            return <div/>
+                        }
                     })}
                 </ReactSortable>
 
@@ -255,7 +259,7 @@ const SubFormComponent = ({reactElement,childrensElements,name,...props}:ISubFor
 
     React.useEffect(() => {
 
-        if(!changeByUser&&!hasValue(value)&&!!hasValue(props.initialValue)) {
+        if(!changeByUser&&(!hasValue(value) || value !== props.initialValue )&&!!hasValue(props.initialValue)) {
             setValue(props.initialValue);
         }
 
@@ -402,7 +406,7 @@ const FieldComponent = ({reactElement,name,...props}:IFieldComponent) => {
 
     React.useEffect(() => {
         
-           if(!changeByUser&&!hasValue(value)&&!!hasValue(props.initialValue)) {
+           if(!changeByUser&&(!hasValue(value) || value !== props.initialValue )&&!!hasValue(props.initialValue)) {
                 setValue(props.initialValue);
             }
 
@@ -491,7 +495,8 @@ const FieldComponent = ({reactElement,name,...props}:IFieldComponent) => {
 
 interface ISimpleFormProps {
     schema: [] | {};
-    onSubmit:(submit:()=>void)=> void;
+    onSubmit?:(submit:()=>void)=> void;
+    isSubForm?:boolean;
     mode?:string;
     children?:object[];
     doc?:object;
@@ -609,7 +614,7 @@ class SimpleForm extends Component<ISimpleFormProps> {
                     &&fielsWithError.indexOf(this.props.schema[field].label)===-1){
                         fielsWithError.push(this.props.schema[field].label);
                     }
-                    if(!this.props.schema[field].optional&&!this.fields[field].validateRequiredSubForm()
+                    if(!this.fields[field].validateRequiredSubForm()
                     &&fielsWithError.indexOf(this.props.schema[field].label)===-1){
                         fielsWithError.push(this.props.schema[field].label);
                     }
@@ -633,7 +638,7 @@ class SimpleForm extends Component<ISimpleFormProps> {
 
     onSubmitForm = (event,...others) => {
        if(this.props.onSubmit&&this.validate()) {
-           this.props.onSubmit(this.docValue)
+          this.props.onSubmit(this.docValue)
        } else {
            console.log('Erro no formulário')
        }

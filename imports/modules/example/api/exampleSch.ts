@@ -42,7 +42,7 @@ export const exampleSch = {
         type: String,
         label: 'Celular',
         defaultValue: '',
-        optional: false,
+        optional: true,
       },
     }
   },
