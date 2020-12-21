@@ -2,9 +2,10 @@ import React from 'react';
 import {withTracker} from "meteor/react-meteor-data";
 import {exampleApi} from "../../api/exampleApi";
 import SimpleForm from "../../../../ui/components/SimpleForm/SimpleForm";
-import SimpleImageUploadBase64 from "../../../../ui/components/ImageUpload/SimpleImageUploadBase64";
+import SimpleImageUploadBase64 from "../../../../ui/components/SimpleFormFields/ImageUpload/SimpleImageUploadBase64";
 import {Form,Container, Header,Button} from "semantic-ui-react";
-import UploadFilesCollection from "/imports/ui/components/UploadFiles/uploadFilesCollection";
+import UploadFilesCollection from "/imports/ui/components/SimpleFormFields/UploadFiles/uploadFilesCollection";
+import TextField from "/imports/ui/components/SimpleFormFields/TextField/TextField";
 
 interface IExampleDetail {
     screenState:string;
@@ -36,31 +37,31 @@ const ExampleDetail = ({screenState,loading,exampleDoc,save,history}:IExampleDet
                     name={'image'}
                     />
                 <Form.Group key={'fields'}>
-                    <Form.Input
+                    <TextField
                         placeholder='Titulo'
                         name='title'
                     />
-                    <Form.Input
+                    <TextField
                         placeholder='Descrição'
                         name='description'
                     />
                 </Form.Group>
                 <Form.Group key={'fields'} formType={'subform'} name={'contacts'}>
-                    <Form.Input
+                    <TextField
                         placeholder='Telefone'
                         name='phone'
                     />
-                    <Form.Input
+                    <TextField
                         placeholder='Celular'
                         name='celphone'
                     />
                 </Form.Group>
                 <Form.Group key={'fields'} formType={'subformArray'} name={'tasks'}>
-                    <Form.Input
+                    <TextField
                         placeholder='Nome da Tarefa'
                         name='name'
                     />
-                    <Form.Input
+                    <TextField
                         placeholder='Descrição da Tarefa'
                         name='description'
                     />

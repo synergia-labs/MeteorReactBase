@@ -344,9 +344,6 @@ const SubFormComponent = ({reactElement,childrensElements,name,...props}:ISubFor
         if(hasValue(field.value)) {
             setError(false);
         }
-
-
-
     }
 
     const onFormChangeHandle = (doc) => {

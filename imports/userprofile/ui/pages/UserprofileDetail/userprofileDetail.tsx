@@ -4,7 +4,7 @@ import {userprofileApi} from "../../../api/UserProfileApi";
 import SimpleForm from "../../../../ui/components/SimpleForm/SimpleForm";
 import _ from 'lodash';
 import {Form,Container, Header,Button} from "semantic-ui-react";
-import SimpleImageUploadBase64 from "../../../../ui/components/ImageUpload/SimpleImageUploadBase64";
+import SimpleImageUploadBase64 from "../../../../ui/components/SimpleFormFields/ImageUpload/SimpleImageUploadBase64";
 
 
 const UserProfileDetail = ({screenState,loading,user,save,history}) => {
