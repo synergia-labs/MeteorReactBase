@@ -26,6 +26,12 @@ export const exampleSch = {
     optional: true,
     isUpload:true,
   },
+  type: {
+    type: String,
+    label: 'Tipo',
+    defaultValue: '',
+    optional: true,
+  },
   contacts: {
     type: Object,
     label: 'Contatos',
