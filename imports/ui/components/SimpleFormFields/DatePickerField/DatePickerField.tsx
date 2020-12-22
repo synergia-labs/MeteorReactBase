@@ -2,8 +2,8 @@ import React from "react";
 import {hasValue} from "/imports/libs/hasValue";
 
 
-export default ({name,label,value,onChange,readOnly,error,...otherProps})=>{
-    const getDateToField = (value) => {
+export default ({name,label,value,onChange,readOnly,error,...otherProps}:IBaseSimpleFormComponent)=>{
+    const getDateToField = (value:any) => {
         if (hasValue(value)&& typeof (value) === 'object') {
             const dateString = new Date(value).toLocaleDateString()
             const dateSplit = dateString&&dateString.split('/')
@@ -15,7 +15,7 @@ export default ({name,label,value,onChange,readOnly,error,...otherProps})=>{
         }
     }
 
-    const handleChange = (event) => {
+    const handleChange = (event:React.BaseSyntheticEvent) => {
         if(event.target.valueAsDate){
             const newDate = new Date(event.target.valueAsDate);
             newDate.setHours(newDate.getHours()+3)
