@@ -3,9 +3,15 @@ import _ from 'lodash';
 import {hasValue} from "/imports/libs/hasValue";
 import Dropdown from "semantic-ui-react/dist/commonjs/modules/Dropdown";
 
-export default ({name,label,value,onChange,readOnly,error,...otherProps})=>{
+interface IOptions {
+    value:string;
+    label:string;
+}
+export default ({name,label,value,onChange,readOnly,error,...otherProps}:IBaseSimpleFormComponent)=>{
+    const options:IOptions[] = otherProps && otherProps.options  ? otherProps.options : [];
+
     if(!!readOnly) {
-            const objValue = hasValue(value)?otherProps.options.find(object=>(object.value===value||object===value) ):undefined;
+            const objValue = hasValue(value) ? options.find(object => (object.value === value || object === value)):undefined;
         return (<div key={name}>
             {hasValue(label)?(<label
                 style={{
@@ -41,7 +47,7 @@ export default ({name,label,value,onChange,readOnly,error,...otherProps})=>{
                     disabled={!!readOnly}
                     {...(_.omit(otherProps,['options']))}
                     options={
-                        (otherProps.options||[]).map(opt=>{
+                        (options).map(opt=>{
                             return  {
                                 key:opt.value||opt,
                                 value:opt.value?opt.value:opt,
