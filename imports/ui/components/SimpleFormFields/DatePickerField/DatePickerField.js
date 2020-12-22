@@ -60,6 +60,7 @@ export default ({name,label,value,onChange,readOnly,error,...otherProps})=>{
                 disabled={!!readOnly}
                 value={ getDateToField(value) }
                 onChange={handleChange}
+                {...otherProps}
             />
         </div>
     )
