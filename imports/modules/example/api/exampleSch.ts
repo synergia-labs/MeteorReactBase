@@ -32,6 +32,12 @@ export const exampleSch = {
     defaultValue: '',
     optional: true,
   },
+  date: {
+    type: Date,
+    label: 'Data',
+    defaultValue: '',
+    optional: true,
+  },
   contacts: {
     type: Object,
     label: 'Contatos',

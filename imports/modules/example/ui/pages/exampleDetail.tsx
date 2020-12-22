@@ -7,6 +7,7 @@ import {Form,Container, Header,Button} from "semantic-ui-react";
 import UploadFilesCollection from "/imports/ui/components/SimpleFormFields/UploadFiles/uploadFilesCollection";
 import TextField from "/imports/ui/components/SimpleFormFields/TextField/TextField";
 import SelectField from "/imports/ui/components/SimpleFormFields/SelectField/SelectField";
+import DatePickerField from "/imports/ui/components/SimpleFormFields/DatePickerField/DatePickerField";
 
 interface IExampleDetail {
     screenState:string;
@@ -55,6 +56,10 @@ const ExampleDetail = ({screenState,loading,exampleDoc,save,history}:IExampleDet
                             {value:'extra',label:'Extra'},
                         ]}
                         name='type'
+                    />
+                    <DatePickerField
+                        placeholder='Data'
+                        name='date'
                     />
                 </Form.Group>
                 <Form.Group key={'fields'} formType={'subform'} name={'contacts'}>
