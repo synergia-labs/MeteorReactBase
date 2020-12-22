@@ -3,7 +3,7 @@ import {hasValue} from "/imports/libs/hasValue";
 import {Form} from 'semantic-ui-react'
 
 
-export default ({name,label,value,onChange,readOnly,error,...otherProps})=>{
+export default ({name,label,value,onChange,readOnly,error,...otherProps}:IBaseSimpleFormComponent)=>{
     if(!!readOnly) {
         return (<div key={name}>
             {hasValue(label)?(<label
@@ -18,9 +18,6 @@ export default ({name,label,value,onChange,readOnly,error,...otherProps})=>{
             >{label}</label>):null}
             <div style={{color:'#222',padding:5,height:35,marginTop:4,marginBottom:8}}>{(value+'')}</div>
         </div>)
-    }
-    const deleteImage = () => {
-        onChange({},{name,value: '-'})
     }
 
     return (<Form.Input key={name} onChange={onChange} value={value} error={!!error} disabled={!!readOnly} id={name} name={name} label={label} {...otherProps} />);
